@@ -3,8 +3,9 @@ import Search from "@/components/search";
 import { CreateButton } from "@/components/buttons";
 import { Suspense } from "react";
 import { TableSkeleton } from "@/components/skeleton";
+import CustomersTable from "@/components/customers-table";
 
-const Contacts = async ({
+const Customers = async ({
   searchParams,
 }: {
   searchParams?: {
@@ -21,10 +22,10 @@ const Contacts = async ({
         <CreateButton />
       </div>
       <Suspense key={query} fallback={<TableSkeleton />}>
-        <ContactTable query={query}/>
+        <CustomersTable query={query}/>
       </Suspense>
     </div>
   );
 };
 
-export default Contacts;
+export default Customers;

@@ -10,9 +10,12 @@ export const getBills = async (query: string) => {
             name: true,
           }
         }
+      },
+      orderBy: {
+        dateCreated: 'desc',
       }
     });
-   
+
     return contacts;
   } catch (error) {
     throw new Error("Failed to fetch contact data");
@@ -22,7 +25,7 @@ export const getBills = async (query: string) => {
 export const getCustomers = async (query: string) => {
   try {
     const contacts = await prisma.customer.findMany({
-      where : {
+      where: {
         name: {
           contains: query,
           mode: "insensitive"
