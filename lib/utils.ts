@@ -1,5 +1,5 @@
 export const formatDate = (dateStr: Date) => {
-  const date = dateStr;
+  const date = new Date(dateStr);
   // Extract date components
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
