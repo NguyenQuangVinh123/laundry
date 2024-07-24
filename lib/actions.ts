@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 export const saveContact = async (prevSate: any, formData: FormData) => {
   const getListCustomer = await prisma.customer.findMany()
+  console.log('xvxvxv2')
   const listNameCustomer = getListCustomer.map(i => i.id)
   let customerId = Number(formData.get("customerId"))
   if(!listNameCustomer.includes(customerId)) {
@@ -30,14 +31,14 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
           increment: 1
         },
         dateUsed: {
-          push : new Date().toString()
+          push : new Date()
         }
       }
     })
   } catch (error) {
     return { message: "Failed to create contact" };
   }
-
+  console.log('xvxvxv242424')
   revalidatePath("/contacts");
   redirect("/contacts");
 };
