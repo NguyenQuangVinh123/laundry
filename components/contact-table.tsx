@@ -7,6 +7,7 @@ const ContactTable = async ({
   query: string;
 }) => {
   const contacts = await getBills(query);
+  console.log(contacts, 'ssss')
 
   return (
     <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
@@ -25,7 +26,7 @@ const ContactTable = async ({
             <td className="px-1 py-3 lg:px-6 ">{contact.customer.name}</td>
             <td className="px-1 py-3 lg:px-6">{contact.amount.toLocaleString("en-US")} VND</td>
             <td className="px-1 py-3 lg:px-6">
-              {formatDate(contact.dateCreated.toString())}
+              {formatDate(contact.dateCreated)}
             </td>
           </tr>
         ))}

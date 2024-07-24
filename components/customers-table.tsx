@@ -20,8 +20,8 @@ const CustomersTable = async ({ query }: { query: string }) => {
             <td className="px-1 py-3 lg:px-6 ">{contact.name}</td>
             <td className="px-1 py-3 lg:px-6">{contact.totalUsed}</td>
             <td className="px-1 py-3 lg:px-6">
-              {contact.dateUsed.map((i) => (
-                <div key={i} className="whitespace-nowrap">{formatDate(i.toString())}</div>
+              {contact.dateUsed.map((i,index) => (
+                <div key={index} className="whitespace-nowrap">{formatDate(i)}</div>
               ))}
             </td>
 

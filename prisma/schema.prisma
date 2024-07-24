@@ -22,7 +22,7 @@ model Customer {
   name     String  @unique
   phone    String?
   bills    Bill[]
-  dateUsed String[]
+  dateUsed DateTime[]
   totalUsed  Int      @default(0)
 }
 
