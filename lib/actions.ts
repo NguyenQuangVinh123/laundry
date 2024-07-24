@@ -42,3 +42,19 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
   redirect("/contacts");
 };
 
+
+export const saveCustomer = async (prevSate: any, formData: FormData) => {
+  try {
+    await prisma.customer.create({
+      data: {
+        name: formData.get("name") as string,
+        phone: formData.get("phone") as string
+      },
+    });
+  } catch (error) {
+    return { message: "Failed to create contact" };
+  }
+
+  revalidatePath("/customers");
+  redirect("/customers");
+};

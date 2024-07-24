@@ -5,10 +5,10 @@ import { IoAddSharp } from "react-icons/io5";
 import { useFormStatus } from "react-dom";
 import clsx from "clsx";
 
-export const CreateButton = () => {
+export const CreateButton = ({link} : {link: string}) => {
   return (
     <Link
-      href="/contacts/create"
+      href={link}
       className="inline-flex items-center space-x-1 text-white bg-blue-700 hover:bg-blue-800 px-5 py-[9px] rounded-sm text-sm"
     >
       <IoAddSharp size={20} />

@@ -30,6 +30,9 @@ export const getCustomers = async (query: string) => {
           contains: query,
           mode: "insensitive"
         }
+      },
+      orderBy: {
+        id: 'desc',
       }
     });
     return contacts;

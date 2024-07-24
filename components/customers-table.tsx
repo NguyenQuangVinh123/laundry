@@ -11,7 +11,6 @@ const CustomersTable = async ({ query }: { query: string }) => {
           <th className="px-1 py-3 lg:px-6 ">Name</th>
           <th className="px-1 py-3 lg:px-6 ">Total Used</th>
           <th className="px-1 py-3 lg:px-6 ">Date Used</th>
-
           <th className="px-1 py-3 lg:px-6 ">Phone</th>
         </tr>
       </thead>
