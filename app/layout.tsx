@@ -14,13 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = usePathname()
-  console.log(router, 'router')
   const active = "text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500"
   const inactive = "hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 border-transparent"
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ul className="flex flex-wrap -mb-px">
+        <ul className="flex flex-wrap -mb-px justify-center items-center">
           <li className="me-2">
             <Link
               href="/contacts"

@@ -9,7 +9,7 @@ const ContactTable = async ({
   const contacts = await getBills(query);
 
   return (
-    <table className="text-sm text-left text-gray-500 m-auto">
+    <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
       <thead className="text-sm text-gray-700 uppercase bg-gray-50">
         <tr className="text-xs md:text-lg ">
           <th className="px-1 py-3 lg:px-6 ">#</th>

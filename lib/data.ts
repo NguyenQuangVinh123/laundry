@@ -2,8 +2,17 @@ import { prisma } from "@/lib/prisma";
 
 
 export const getBills = async (query: string) => {
+  console.log(query, 'query')
   try {
     const contacts = await prisma.bill.findMany({
+      where: {
+        customer: {
+          name: {
+            contains: query,
+            mode: "insensitive"
+          }
+        }
+      },
       include: {
         customer: {
           select: {
