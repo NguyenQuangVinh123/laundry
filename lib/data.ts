@@ -1,17 +1,25 @@
 import { prisma } from "@/lib/prisma";
 
-
-export const getBills = async (query: string) => {
+export const getBills = async ( query = { query: "", startDate: new Date(), endDate: new Date() } ) => {
   console.log(query, 'query')
   try {
     const contacts = await prisma.bill.findMany({
       where: {
-        customer: {
-          name: {
-            contains: query,
-            mode: "insensitive"
+        AND: [{
+          customer: {
+            name: {
+              contains: query?.query,
+              mode: "insensitive"
+            }
+          }
+        },
+        {
+          dateCreated: {
+            gte: new Date(query?.startDate),
+            lte: new Date(query?.endDate),
           }
         }
+        ]
       },
       include: {
         customer: {

@@ -10,14 +10,8 @@ const Search = () => {
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    // console.log(term);
-    const params = new URLSearchParams(searchParams);
-    params.set("page", "1");
-    if (term) {
-      params.set("query", term);
-    } else {
-      params.delete("query");
-    }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("query", term);
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 

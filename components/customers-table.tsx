@@ -3,7 +3,6 @@ import { formatDate } from "@/lib/utils";
 
 const CustomersTable = async ({ query }: { query: string }) => {
   const contacts = await getCustomers(query);
-  console.log(contacts, "contacts");
   return (
     <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
       <thead className="text-sm text-gray-700 uppercase bg-gray-50">

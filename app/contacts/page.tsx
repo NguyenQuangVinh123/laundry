@@ -10,9 +10,11 @@ const Contacts = async ({
   searchParams?: {
     query?: string;
     page?: string;
+    startDate?: string;
+    endDate?: string;
   };
 }) => {
-  const query = searchParams?.query || "";
+  const query = `${searchParams?.query}-${searchParams?.startDate}-${searchParams?.endDate}`;
 
   return (
     <div className="max-w-screen-md mx-auto mt-5">
@@ -21,7 +23,7 @@ const Contacts = async ({
         <CreateButton link="/contacts/create" />
       </div>
       <Suspense key={query} fallback={<TableSkeleton />}>
-        <ContactTable query={query}/>
+        <ContactTable searchParams={searchParams} />
       </Suspense>
     </div>
   );
