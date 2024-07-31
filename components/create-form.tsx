@@ -10,7 +10,6 @@ const CreateForm = ({customers} : {customers: any}) => {
     value: i.id,
     label: i.name
   }))
-  console.log(mappingCustomer, 'mappingCustomer')
   return (
     <div>
       <form action={formAction}>

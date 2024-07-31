@@ -7,7 +7,6 @@ const ContactTable = async ({
   query: string;
 }) => {
   const contacts = await getBills(query);
-  console.log(contacts, 'ssss')
 
   return (
     <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
