@@ -3,6 +3,7 @@ import Search from "@/components/search";
 import { CreateButton } from "@/components/buttons";
 import { Suspense } from "react";
 import { TableSkeleton } from "@/components/skeleton";
+import { getBills } from "@/lib/data";
 
 const Contacts = async ({
   searchParams,
@@ -15,7 +16,8 @@ const Contacts = async ({
   };
 }) => {
   const query = `${searchParams?.query}-${searchParams?.startDate}-${searchParams?.endDate}`;
-
+  const contacts = await getBills(searchParams as any);
+  console.log(contacts, 'sfssgxcccc')
   return (
     <div className="max-w-screen-md mx-auto mt-5">
       <div className="flex items-center justify-between gap-1 mb-5 p-2">
@@ -23,7 +25,7 @@ const Contacts = async ({
         <CreateButton link="/contacts/create" />
       </div>
       <Suspense key={query} fallback={<TableSkeleton />}>
-        <ContactTable searchParams={searchParams} />
+        <ContactTable contacts ={contacts} searchParams={searchParams} />
       </Suspense>
     </div>
   );

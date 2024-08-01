@@ -53,7 +53,7 @@ export default function Table({
       return;
     }
   };
-
+  console.log(contacts, 'contacts')
   return (
     <div className="flex gap-3 flex-col">
       <div className="w-full">
@@ -78,7 +78,7 @@ export default function Table({
           </tr>
         </thead>
         <tbody>
-          {contacts.map((contact: any) => (
+          {contacts && contacts.map((contact: any) => (
             <tr
               key={contact.id}
               className="bg-white border-b text-xs md:text-lg"
@@ -86,7 +86,7 @@ export default function Table({
               <td className="px-1 py-3 lg:px-6 ">{contact.id}</td>
               <td className="px-1 py-3 lg:px-6 ">{contact.customer.name}</td>
               <td className="px-1 py-3 lg:px-6">
-                {contact.amount.toLocaleString("en-US")} VND
+                {contact.amount.toLocaleString("en-US")}
               </td>
               <td className="px-1 py-3 lg:px-6">
                 {formatDate(contact.dateCreated)}

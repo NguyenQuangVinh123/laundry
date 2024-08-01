@@ -2,9 +2,13 @@ import { getBills } from "@/lib/data";
 
 import Table from "./table";
 
-const ContactTable = async ({ searchParams } : {searchParams: any}) => {
-  const contacts = await getBills(searchParams);
-
+const ContactTable = async ({
+  searchParams,
+  contacts,
+}: {
+  searchParams: any;
+  contacts: any;
+}) => {
   return <Table contacts={contacts} searchParam={searchParams} />;
 };
 

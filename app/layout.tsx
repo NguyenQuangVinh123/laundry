@@ -22,8 +22,8 @@ export default function RootLayout({
         <ul className="flex flex-wrap -mb-px justify-center items-center">
           <li className="me-2">
             <Link
-              href="/contacts"
-              className={`inline-block p-4 border-b-2   rounded-t-lg ${router === '/contacts' ? active : inactive} `} >
+              href={`/contacts?startDate=${new Date().toDateString()}&endDate=${new Date().toDateString()}&query=`}
+              className={`inline-block p-4 border-b-2   rounded-t-lg ${router.includes('/contacts') ? active : inactive} `} >
               Bills
             </Link>
           </li>
