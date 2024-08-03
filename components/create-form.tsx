@@ -3,13 +3,35 @@
 import { saveContact } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { SubmitButton } from "@/components/buttons";
-import CreatableSelect from 'react-select/creatable';
-const CreateForm = ({customers} : {customers: any}) => {
+import CreatableSelect from "react-select/creatable";
+import { useState } from "react";
+const CreateForm = ({ customers }: { customers: any }) => {
   const [state, formAction] = useFormState(saveContact, null);
   const mappingCustomer = customers.map((i: any) => ({
     value: i.id,
-    label: i.name
-  }))
+    label: i.name,
+  }));
+  const [form, setForm] = useState({
+    customerId: "",
+    amount: "",
+  });
+  const handleInputChange = (e: any) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+  const handleSelectChange = (e: any) => {
+    const { value } = e;
+    setForm((prevForm) => ({
+      ...prevForm,
+      customerId: value,
+    }));
+  };
+  const isFormValid = () => {
+    return form.customerId !== "" && form.amount !== "";
+  };
   return (
     <div>
       <form action={formAction}>
@@ -20,8 +42,12 @@ const CreateForm = ({customers} : {customers: any}) => {
           >
             Customer Name
           </label>
-          <CreatableSelect options={mappingCustomer} name="customerId" isClearable={true} />
-          
+          <CreatableSelect
+            onChange={handleSelectChange}
+            options={mappingCustomer}
+            name="customerId"
+            isClearable={true}
+          />
         </div>
         <div className="mb-5">
           <label
@@ -36,11 +62,10 @@ const CreateForm = ({customers} : {customers: any}) => {
             id="amount"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Amount"
+            onChange={handleInputChange}
           />
-          
         </div>
-        
-        <SubmitButton label="save" />
+        <SubmitButton label="save" disabled={!isFormValid()} />
       </form>
     </div>
   );
