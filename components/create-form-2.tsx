@@ -40,7 +40,7 @@ const CreateForm2 = () => {
           />
         </div>
 
-        <SubmitButton label="save" />
+        <SubmitButton label="save" disabled={false} />
       </form>
     </div>
   );
