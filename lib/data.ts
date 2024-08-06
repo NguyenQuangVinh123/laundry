@@ -49,8 +49,7 @@ export const getCustomers = async (query: string) => {
       },
       orderBy: {
         id: 'desc',
-      },
-      take: 20
+      }
     });
     return contacts;
   } catch (error) {
