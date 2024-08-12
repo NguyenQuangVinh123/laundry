@@ -24,7 +24,7 @@ export default function RootLayout({
           <li className="me-2">
             <Link
               href="/contacts"
-              className={`inline-block p-4 border-b-2   rounded-t-lg ${router === '/contacts' ? active : inactive} `} >
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${router === '/contacts' ? active : inactive} `} >
               Bills
             </Link>
           </li>
@@ -32,7 +32,6 @@ export default function RootLayout({
             <Link
               href="/customers"
               className={`inline-block p-4  ${router === '/customers' ? active : inactive}`}
-              aria-current="page"
             >
               Customers
             </Link>

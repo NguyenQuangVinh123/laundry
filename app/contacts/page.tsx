@@ -9,7 +9,6 @@ const Contacts = async ({
 }: {
   searchParams?: {
     query?: string;
-    page?: string;
   };
 }) => {
   const query = searchParams?.query || "";
