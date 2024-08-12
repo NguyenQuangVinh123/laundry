@@ -6,6 +6,12 @@ export const getBills = async (query: string) => {
     const currentDate = new Date();
     const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
+    const dateFilter = query ? {} : {
+      dateCreated: {
+        gte: startOfDay,
+        lte: endOfDay,
+      }
+    };
     const contacts = await prisma.bill.findMany({
       where: {
         customer: {
@@ -14,10 +20,7 @@ export const getBills = async (query: string) => {
             mode: "insensitive"
           }
         },
-        dateCreated : {
-          gte: startOfDay,
-          lte: endOfDay,
-        }
+        ...dateFilter
       },
       include: {
         customer: {
