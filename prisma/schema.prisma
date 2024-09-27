@@ -32,4 +32,5 @@ model Bill {
   dateCreated        DateTime @default(now())
   customerId  Int
   customer    Customer @relation(fields: [customerId], references: [id])
+  note        String   @default("")
 }

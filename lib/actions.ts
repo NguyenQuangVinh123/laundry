@@ -20,7 +20,8 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
     await prisma.bill.create({
       data: {
         customerId: customerId,
-        amount: Number(formData.get("amount"))
+        amount: Number(formData.get("amount")),
+        note: formData.get("note")?.toString() ?? ""
       },
     });
     await prisma.customer.update({
