@@ -1,5 +1,6 @@
-import { getBills } from "@/lib/data";
+import { getBills, getTotalDate, getTotalMonth } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
+import Total from "./total";
 
 const ContactTable = async ({
   query,
@@ -7,9 +8,13 @@ const ContactTable = async ({
   query: string;
 }) => {
   const contacts = await getBills(query);
+  const totalMonth = await getTotalMonth()
+  const totalDate = await getTotalDate()
 
   return (
-    <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
+    <>
+    <Total totalMonth={totalMonth || 0} totalDate={totalDate || 0} />
+      <table className="text-sm text-left text-gray-500 m-auto w-[95%]">
       <thead className="text-sm text-gray-700 uppercase bg-gray-50">
         <tr className="text-xs md:text-lg ">
           <th className="px-1 py-3 lg:px-6 ">#</th>
@@ -33,6 +38,7 @@ const ContactTable = async ({
         ))}
       </tbody>
     </table>
+    </>
   );
 };
 

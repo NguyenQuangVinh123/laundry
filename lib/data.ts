@@ -59,3 +59,50 @@ export const getCustomers = async (query: string) => {
     throw new Error("Failed to fetch contact data");
   }
 };
+
+export const getTotalMonth = async () => {
+  try {
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+
+    const totalAmount = await prisma.bill.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        dateCreated: {
+          gte: startOfMonth,
+          lt: endOfMonth,
+        },
+      },
+    });
+    return totalAmount._sum.amount;
+  } catch (error) {
+    throw new Error("Failed to fetch contact data");
+  }
+};
+
+export const getTotalDate = async () => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); // Set to midnight (start of the day)
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); // Set to the last millisecond of the day
+
+    const totalAmount = await prisma.bill.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        dateCreated: {
+          gte: startOfDay,
+          lt: endOfDay,
+        },
+      },
+    });
+    return totalAmount._sum.amount;
+  } catch (error) {
+    throw new Error("Failed to fetch contact data");
+  }
+};
