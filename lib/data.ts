@@ -106,3 +106,69 @@ export const getTotalDate = async () => {
     throw new Error("Failed to fetch contact data");
   }
 };
+
+export const getTotalByDayOfMonth = async () => {
+  try {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const currentDay = currentDate.getDate(); // Get current day of the month
+
+    const dailyTotals = [];
+
+    for (let day = 1; day <= currentDay; day++) { // Loop only up to the current day
+      const startOfDay = new Date(currentYear, currentMonth, day);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(currentYear, currentMonth, day);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const totalAmount = await prisma.bill.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          dateCreated: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+        },
+      });
+
+      dailyTotals.push({
+        date: startOfDay,
+        total: totalAmount._sum.amount || 0,
+      });
+    }
+
+    return dailyTotals;
+  } catch (error) {
+    throw new Error("Failed to fetch daily totals up to the current date");
+  }
+};
+
+export const getBillById = async (billId: number) => {
+  try {
+    const bill = await prisma.bill.findUnique({
+      where: {
+        id: billId,
+      },
+      include: {
+        customer: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!bill) {
+      throw new Error(`Bill with ID ${billId} not found`);
+    }
+
+    return bill;
+  } catch (error) {
+    console.error("Error fetching bill by ID:", error);
+    throw new Error("Failed to fetch bill data");
+  }
+};

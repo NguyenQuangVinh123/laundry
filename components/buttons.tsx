@@ -5,7 +5,7 @@ import { IoAddSharp } from "react-icons/io5";
 import { useFormStatus } from "react-dom";
 import clsx from "clsx";
 
-export const CreateButton = ({link} : {link: string}) => {
+export const CreateButton = ({ link }: { link: string }) => {
   return (
     <Link
       href={link}
@@ -17,7 +17,13 @@ export const CreateButton = ({link} : {link: string}) => {
   );
 };
 
-export const SubmitButton = ({ label, disabled }: { label: string, disabled: boolean }) => {
+export const SubmitButton = ({
+  label,
+  disabled,
+}: {
+  label: string;
+  disabled: boolean;
+}) => {
   const { pending } = useFormStatus();
   const className = clsx(
     "text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-sm text-sm w-full px-5 py-3 text-center",
@@ -29,6 +35,7 @@ export const SubmitButton = ({ label, disabled }: { label: string, disabled: boo
   return (
     <button type="submit" className={className} disabled={disabled}>
       {label === "save" && <span>{pending ? "Saving..." : "Save"}</span>}
+      {label === "edit" && <span>{pending ? "Editing..." : "Edit"}</span>}
     </button>
   );
 };

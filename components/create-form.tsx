@@ -1,12 +1,14 @@
 "use client";
 
-import { saveContact } from "@/lib/actions";
+import { saveContact, updateContact } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { SubmitButton } from "@/components/buttons";
 import CreatableSelect from "react-select/creatable";
-import { useState } from "react";
-const CreateForm = ({ customers }: { customers: any }) => {
-  const [state, formAction] = useFormState(saveContact, null);
+import { useEffect, useState } from "react";
+const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
+  const action = bill ? updateContact : saveContact;
+  const [state, formAction] = useFormState(action, bill);
+  console.log(state, "state");
   const mappingCustomer = customers.map((i: any) => ({
     value: i.id,
     label: i.name,
@@ -15,8 +17,19 @@ const CreateForm = ({ customers }: { customers: any }) => {
     customerId: "",
     amount: "",
   });
+  useEffect(() => {
+    if (bill) {
+      setForm({
+        customerId: bill.customerId,
+        amount: bill.amount,
+      });
+    }
+  }, [bill]);
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
+    if (state) {
+      state[name] = value;
+    }
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,
@@ -35,20 +48,26 @@ const CreateForm = ({ customers }: { customers: any }) => {
   return (
     <div>
       <form action={formAction}>
-        <div className="mb-5">
-          <label
-            htmlFor="customerId"
-            className="block text-sm font-medium text-gray-900"
-          >
-            Customer Name
-          </label>
-          <CreatableSelect
-            onChange={handleSelectChange}
-            options={mappingCustomer}
-            name="customerId"
-            isClearable={true}
-          />
+        <div className="hidden">
+          <input type="number" name="id" id="id" value={bill && bill.id} />
         </div>
+        {!state && (
+          <div className="mb-5">
+            <label
+              htmlFor="customerId"
+              className="block text-sm font-medium text-gray-900"
+            >
+              Customer Name
+            </label>
+            <CreatableSelect
+              onChange={handleSelectChange}
+              options={mappingCustomer}
+              name="customerId"
+              isClearable={true}
+            />
+          </div>
+        )}
+
         <div className="mb-5">
           <label
             htmlFor="amount"
@@ -63,6 +82,7 @@ const CreateForm = ({ customers }: { customers: any }) => {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Amount"
             onChange={handleInputChange}
+            value={state && state.amount}
           />
         </div>
         <div className="mb-5">
@@ -78,10 +98,14 @@ const CreateForm = ({ customers }: { customers: any }) => {
             id="note"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Note"
+            onChange={handleInputChange}
+            value={state && state.note}
           />
-          
         </div>
-        <SubmitButton label="save" disabled={!isFormValid()} />
+        <SubmitButton
+          label={bill ? "edit" : "save"}
+          disabled={!isFormValid()}
+        />
       </form>
     </div>
   );
