@@ -31,6 +31,7 @@ export default function Total({
       setTotalMonth(totalMonth);
       setTotalDateMonth(totalDate);
       localStorage.setItem("isAdmin", "1");
+      location.reload()
     }
   };
 
