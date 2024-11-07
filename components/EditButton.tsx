@@ -20,7 +20,7 @@ export default function EditButton({ id }: { id: string }) {
             onClick={() => {
               const params = new URLSearchParams(searchParams.toString());
               params.set("id", id);
-              router.push(`${pathName}/create?${params.toString()}`);
+              router.replace(`${pathName}/create?${params.toString()}`);
             }}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

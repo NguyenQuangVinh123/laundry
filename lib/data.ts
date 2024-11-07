@@ -163,12 +163,10 @@ export const getBillById = async (billId: number) => {
     });
 
     if (!bill) {
-      throw new Error(`Bill with ID ${billId} not found`);
+      return null
     }
-
     return bill;
   } catch (error) {
-    console.error("Error fetching bill by ID:", error);
-    throw new Error("Failed to fetch bill data");
+    return null
   }
 };
