@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
   const action = bill ? updateContact : saveContact;
   const [state, formAction] = useFormState(action, bill);
-  console.log(state, "state");
   const mappingCustomer = customers.map((i: any) => ({
     value: i.id,
     label: i.name,
