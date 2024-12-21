@@ -1,16 +1,23 @@
 import { prisma } from "@/lib/prisma";
 
 
-export const getBills = async (query: string) => {
+export const getBills = async (query: string, date?: string) => {
   try {
-    const currentDate = new Date();
-    const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
-    const dateFilter = query ? {} : {
+    let startOfDay, endOfDay;
+    if (date) {
+      const selectedDate = new Date(date);
+      startOfDay = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 0, 0, 0));
+      endOfDay = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 23, 59, 59, 999));
+    } else {
+      const currentDate = new Date();
+      startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+      endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
+    }
+    const dateFilter = {
       dateCreated: {
         gte: startOfDay,
         lte: endOfDay,
-      }
+      },
     };
     const contacts = await prisma.bill.findMany({
       where: {
@@ -20,7 +27,7 @@ export const getBills = async (query: string) => {
             mode: "insensitive"
           }
         },
-        ...dateFilter
+        ...dateFilter,
       },
       include: {
         customer: {

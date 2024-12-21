@@ -31,39 +31,32 @@ export default function Total({
       setTotalMonth(totalMonth);
       setTotalDateMonth(totalDate);
       localStorage.setItem("isAdmin", "1");
-      location.reload()
+      location.reload();
     }
   };
 
   return (
     <>
-      <div className="cursor-pointer" onClick={(e) => showAllAdmin(e)}>
-        Admin Checking
+      <div>
+        <button
+          onClick={(e) => showAllAdmin(e)}
+          className="p-2 hover:bg-gray-100 rounded"
+        >
+          Admin Checking
+        </button>
       </div>
       {showAll && (
         <>
           <div className="flex gap-2">
             <div>
-              Total Date:
-              <span
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
+              Total Date:{" "}
+              <span className="text-xl font-bold cursor-pointer">
                 {totalDateShow}
               </span>
             </div>
             <div>
-              Total Month:
-              <span
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
+              Total Month:{" "}
+              <span className="text-xl font-bold cursor-pointer">
                 {totalMonthShow}
               </span>
             </div>

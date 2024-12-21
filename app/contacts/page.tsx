@@ -9,9 +9,11 @@ const Contacts = async ({
 }: {
   searchParams?: {
     query?: string;
+    date?: string;
   };
 }) => {
   const query = searchParams?.query || "";
+  const date = searchParams?.date || ""
   const NoSSRPage = dynamic(() => import("@/components/contact-table"), {ssr : false})
   return (
     <div className="max-w-screen-lg mx-auto mt-5">
@@ -20,7 +22,7 @@ const Contacts = async ({
         <CreateButton link="/contacts/create" />
       </div>
       <Suspense key={query} fallback={<TableSkeleton />}>
-        <NoSSRPage query={query}/>
+        <NoSSRPage query={query} date={date}/>
       </Suspense>
     </div>
   );

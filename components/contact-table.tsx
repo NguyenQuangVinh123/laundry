@@ -8,8 +8,14 @@ import { formatDate } from "@/lib/utils";
 import Total from "./total";
 import EditButton from "./EditButton";
 
-const ContactTable = async ({ query }: { query: string }) => {
-  const contacts = await getBills(query);
+const ContactTable = async ({
+  query,
+  date,
+}: {
+  query: string;
+  date: string;
+}) => {
+  const contacts = await getBills(query, date);
   const totalMonth = await getTotalMonth();
   const totalDate = await getTotalDate();
   const totalByDateOfMonth = await getTotalByDayOfMonth();
