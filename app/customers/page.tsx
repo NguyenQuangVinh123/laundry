@@ -1,4 +1,3 @@
-import ContactTable from "@/components/contact-table";
 import Search from "@/components/search";
 import { CreateButton } from "@/components/buttons";
 import { Suspense } from "react";
