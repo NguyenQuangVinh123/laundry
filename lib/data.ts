@@ -19,6 +19,7 @@ export const getBills = async (query: string, date?: string) => {
         lte: endOfDay,
       },
     };
+    console.log(query, 'query')
     const contacts = await prisma.bill.findMany({
       where: {
         customer: {
@@ -27,7 +28,7 @@ export const getBills = async (query: string, date?: string) => {
             mode: "insensitive"
           }
         },
-        ...dateFilter,
+        ...(query ? date ? dateFilter : {} : dateFilter),
       },
       include: {
         customer: {
