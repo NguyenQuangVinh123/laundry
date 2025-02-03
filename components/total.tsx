@@ -1,6 +1,7 @@
 "use client";
 import { formatDate } from "@/lib/utils";
 import React, { useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function Total({
   totalMonth,
@@ -18,11 +19,8 @@ export default function Total({
   );
   const [totalByDateOfMonthS, setTotalByDateOfMonthS] =
     useState<any>(totalByDateOfMonth);
-  let showAll: any = false;
+  const [value, setValue, removeValue] = useLocalStorage("isAdmin", false);
 
-  if (typeof window !== "undefined" && localStorage) {
-    showAll = localStorage.getItem("isAdmin");
-  }
   const showAllAdmin = (e: any) => {
     e.stopPropagation();
     let person = prompt("Please enter password");
@@ -30,7 +28,7 @@ export default function Total({
       setTotalByDateOfMonthS(totalByDateOfMonth);
       setTotalMonth(totalMonth);
       setTotalDateMonth(totalDate);
-      localStorage.setItem("isAdmin", "1");
+      setValue(true);
       location.reload();
     }
   };
@@ -45,7 +43,7 @@ export default function Total({
           Admin Checking
         </button>
       </div>
-      {showAll && (
+      {value && (
         <>
           <div className="flex gap-2">
             <div>

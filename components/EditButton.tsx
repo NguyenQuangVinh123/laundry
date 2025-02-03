@@ -2,6 +2,7 @@
 import React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import { useLocalStorage } from "usehooks-ts";
 
 interface EditButtonProps {
   readonly id: string;
@@ -11,14 +12,11 @@ export default function EditButton({ id }: EditButtonProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
-  let showAll: any = false;
+  const [value, setValue, removeValue] = useLocalStorage("isAdmin", false);
 
-  if (typeof window !== "undefined" && localStorage) {
-    showAll = localStorage.getItem("isAdmin");
-  }
   return (
     <td className="cursor-pointer">
-      {showAll && (
+      {value && (
         <div className="flex gap-1">
           <svg
             onClick={() => {
