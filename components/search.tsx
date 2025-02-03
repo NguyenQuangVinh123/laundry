@@ -3,11 +3,20 @@
 import { IoSearch } from "react-icons/io5";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { useEffect } from "react";
 
 const Search = () => {
   const searchParams: any = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const clearLocalStorage = () => {
+    localStorage.clear();
+  };
+
+  useEffect(() => {
+    clearLocalStorage();
+  }, []);
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
