@@ -27,7 +27,7 @@ export const getBills = async (query: string, date?: string) => {
             mode: "insensitive"
           }
         },
-        ...(query ? date ? dateFilter : {} : dateFilter),
+        ...(query ? (date ? dateFilter : {}) : dateFilter),
       },
       include: {
         customer: {
