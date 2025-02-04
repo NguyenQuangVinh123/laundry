@@ -20,7 +20,8 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
     await prisma.bill.create({
       data: {
         customerId: customerId,
-        amount: Number(formData.get("amount"))
+        amount: Number(formData.get("amount")),
+        note: formData.get("note")?.toString() ?? ""
       },
     });
     await prisma.customer.update({
@@ -56,4 +57,40 @@ export const saveCustomer = async (prevSate: any, formData: FormData) => {
 
   revalidatePath("/customers");
   redirect("/customers");
+};
+
+export const updateContact = async (prevSate: any, formData: FormData) => {
+ 
+  try {
+    await prisma.bill.updateMany({
+      where: { id: Number(formData.get("id")) },
+      data: {
+        amount: Number(formData.get("amount")),
+        note: formData.get("note")?.toString() ?? "",
+      },
+    });   
+
+  } catch (error) {
+    return { message: "Failed to update contact" };
+  }
+  revalidatePath("/contacts");
+  redirect("/contacts");
+};
+
+export const deleteContact = async (customerId: number) => {
+  try {
+    // Delete bills associated with the customer
+    await prisma.bill.deleteMany({
+      where: { customerId: customerId },
+    });
+
+    // Delete the customer
+    await prisma.customer.delete({
+      where: { id: customerId },
+    });
+
+    return { message: "Contact deleted successfully" };
+  } catch (error) {
+    return { message: "Failed to delete contact" };
+  }
 };

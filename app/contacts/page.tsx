@@ -1,31 +1,28 @@
-import ContactTable from "@/components/contact-table";
 import Search from "@/components/search";
 import { CreateButton } from "@/components/buttons";
 import { Suspense } from "react";
 import { TableSkeleton } from "@/components/skeleton";
-import { getBills } from "@/lib/data";
+import dynamic from "next/dynamic";
 
 const Contacts = async ({
   searchParams,
 }: {
   searchParams?: {
     query?: string;
-    page?: string;
-    startDate?: string;
-    endDate?: string;
+    date?: string;
   };
 }) => {
-  const query = `${searchParams?.query}-${searchParams?.startDate}-${searchParams?.endDate}`;
-  const contacts = await getBills(searchParams as any);
-  console.log(contacts, 'sfssgxcccc')
+  const query = searchParams?.query || "";
+  const date = searchParams?.date || ""
+  const NoSSRPage = dynamic(() => import("@/components/contact-table"), {ssr : false})
   return (
-    <div className="max-w-screen-md mx-auto mt-5">
-      <div className="flex items-center justify-between gap-1 mb-5 p-2">
+    <div className="max-w-screen-lg mx-auto mt-5">
+      <div className="flex items-center justify-between gap-2 mb-5 p-2 max-w-sm m-auto">
         <Search />
         <CreateButton link="/contacts/create" />
       </div>
       <Suspense key={query} fallback={<TableSkeleton />}>
-        <ContactTable contacts ={contacts} searchParams={searchParams} />
+        <NoSSRPage query={query} date={date}/>
       </Suspense>
     </div>
   );

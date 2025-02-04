@@ -22,8 +22,8 @@ export default function RootLayout({
         <ul className="flex flex-wrap -mb-px justify-center items-center">
           <li className="me-2">
             <Link
-              href={`/contacts?startDate=${new Date().toDateString()}&endDate=${new Date().toDateString()}&query=`}
-              className={`inline-block p-4 border-b-2   rounded-t-lg ${router.includes('/contacts') ? active : inactive} `} >
+              href="/contacts"
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${router === '/contacts' ? active : inactive} `} >
               Bills
             </Link>
           </li>
@@ -31,7 +31,6 @@ export default function RootLayout({
             <Link
               href="/customers"
               className={`inline-block p-4  ${router === '/customers' ? active : inactive}`}
-              aria-current="page"
             >
               Customers
             </Link>
