@@ -19,24 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ul className="flex flex-wrap -mb-px justify-center items-center">
-          <li className="me-2">
-            <Link
-              href="/contacts"
-              className={`inline-block p-4 border-b-2 rounded-t-lg ${router === '/contacts' ? active : inactive} `} >
-              Bills
-            </Link>
-          </li>
-          <li className="me-2">
-            <Link
-              href="/customers"
-              className={`inline-block p-4  ${router === '/customers' ? active : inactive}`}
-            >
-              Customers
-            </Link>
-          </li>
-        </ul>
-
         {children}
       </body>
     </html>
