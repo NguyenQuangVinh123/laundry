@@ -9,11 +9,11 @@ const CreateContactPage = async ({
   searchParams: { [key: string]: string };
 }) => {
   const customers = await getCustomers("");
-  const bill = await getBillById(parseInt(searchParams.id || "0"));
+  const bill = await getBillById(parseInt(searchParams.id))
   return (
     <div className="max-w-md mx-auto mt-5 p-2">
-      <h1 className="text-2xl text-center mb-2">{searchParams && bill ? "Edit" : "Add New"} Bill</h1>
-      <CreateForm customers={customers} bill={searchParams && bill} />
+      <h1 className="text-2xl text-center mb-2">{bill && bill ? "Edit" : "Add New"} Bill</h1>
+      <CreateForm customers={customers} bill={bill && bill} />
     </div>
   );
 };
