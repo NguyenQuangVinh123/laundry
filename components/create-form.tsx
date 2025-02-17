@@ -46,67 +46,72 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
   };
   return (
     <div>
-      <form action={formAction}>
-        <div className="hidden">
-          <input type="number" name="id" id="id" value={bill && bill.id} />
-        </div>
-        {!state && (
-          <div className="mb-5">
-            <label
-              htmlFor="customerId"
-              className="block text-sm font-medium text-gray-900"
-            >
-              Customer Name
-            </label>
-            <CreatableSelect
-              onChange={handleSelectChange}
-              options={mappingCustomer}
-              name="customerId"
-              isClearable={true}
-            />
-          </div>
-        )}
-
+    <form action={formAction}>
+      <div className="hidden">
+        <input type="number" name="id" id="id" value={bill && bill.id} />
+      </div>
+  
+      {!state && (
         <div className="mb-5">
           <label
-            htmlFor="amount"
+            htmlFor="customerId"
             className="block text-sm font-medium text-gray-900"
           >
-            Amount
+            Customer Name
           </label>
-          <input
-            type="number"
-            name="amount"
-            id="amount"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Amount"
-            onChange={handleInputChange}
-            value={state && state.amount}
+          <CreatableSelect
+            onChange={handleSelectChange}
+            options={mappingCustomer}
+            name="customerId"
+            isClearable={true}
+            className="mt-1 text-sm border rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
-        <div className="mb-5">
-          <label
-            htmlFor="note"
-            className="block text-sm font-medium text-gray-900"
-          >
-            Note
-          </label>
-          <input
-            type="text"
-            name="note"
-            id="note"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Note"
-            onChange={handleInputChange}
-            value={state && state.note}
-          />
-        </div>
-        <SubmitButton
+      )}
+  
+      <div className="mb-5">
+        <label
+          htmlFor="amount"
+          className="block text-sm font-medium text-gray-900"
+        >
+          Amount
+        </label>
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all duration-300 ease-in-out"
+          placeholder="Amount"
+          onChange={handleInputChange}
+          value={state && state.amount}
+        />
+      </div>
+  
+      <div className="mb-5">
+        <label
+          htmlFor="note"
+          className="block text-sm font-medium text-gray-900"
+        >
+          Note
+        </label>
+        <input
+          type="text"
+          name="note"
+          id="note"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all duration-300 ease-in-out"
+          placeholder="Note"
+          onChange={handleInputChange}
+          value={state && state.note}
+        />
+      </div>
+  
+      <SubmitButton
           label={bill ? "edit" : "save"}
           disabled={!isFormValid()}
         />
-      </form>
-    </div>
+    </form>
+  </div>
+  
   );
 };
 

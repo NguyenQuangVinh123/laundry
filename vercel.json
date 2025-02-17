@@ -1,7 +1,0 @@
-{
-    "functions": {
-      "app/api/deleteContact/route.ts": {
-        "maxDuration": 60
-      }
-    }
-  }
