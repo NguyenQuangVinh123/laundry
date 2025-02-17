@@ -5,7 +5,7 @@ import axios from "axios";
 import { useLocalStorage } from "usehooks-ts";
 
 interface EditButtonProps {
-  readonly id: string;
+  id: string;
 }
 
 export default function EditButton({ id }: EditButtonProps) {

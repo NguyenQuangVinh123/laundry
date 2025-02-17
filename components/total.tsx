@@ -48,7 +48,7 @@ export default function Total({
       </div>
       {value && (
         <>
-          <div className="flex gap-2">
+          <div className="flex gap-1 flex-col">
             <div>
               Total Date:{" "}
               <span className="text-xl font-bold text-red-500">
