@@ -28,7 +28,7 @@ const ContactTable = async ({
       />
       <table className="w-full m-auto border border-gray-300 shadow-lg rounded-lg overflow-hidden">
         {/* Table Header */}
-        <thead className="bg-gradient-to-r from-pink-400 to-pink-800 text-white text-sm uppercase">
+        <thead className="bg-gradient-to-r bg-pink-400  text-white text-sm uppercase">
           <tr className="text-xs md:text-lg">
             <th className="px-1 py-4 lg:px-6"></th>
             <th className="px-1 py-4 lg:px-6">#</th>
