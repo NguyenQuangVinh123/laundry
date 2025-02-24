@@ -84,7 +84,7 @@ export default function Total({
 
             {/* Collapsible Content */}
             <div
-              className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[1000px] opacity-100 p-4" : "max-h-0 opacity-0 p-0"
+              className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-max opacity-100 p-4" : "max-h-0 opacity-0 p-0"
                 } bg-white rounded-b-xl`}
             >
               {totalByDateOfMonthS.map((i: any, index: number) => (
