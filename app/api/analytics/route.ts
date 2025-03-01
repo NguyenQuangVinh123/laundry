@@ -42,6 +42,39 @@ export async function GET(request: Request) {
       },
     });
 
+    // Get current month spending for customer 427
+    const customer427Spending = await prisma.bill.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        customerId: 427,
+        dateCreated: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+    });
+
+    // Get previous month spending for customer 427
+    const customer427PrevSpending = await prisma.bill.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        customerId: 427,
+        dateCreated: {
+          gte: startOfPrevMonth,
+          lte: endOfPrevMonth,
+        },
+      },
+    });
+
+    // Calculate spending change percentage
+    const currentSpending = customer427Spending._sum.amount || 0;
+    const previousSpending = customer427PrevSpending._sum.amount || 0;
+    const spendingChange = previousSpending ? ((currentSpending - previousSpending) / previousSpending) * 100 : 0;
+
     // Get monthly data for the last 12 months
     const last12Months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
@@ -82,11 +115,6 @@ export async function GET(request: Request) {
 
     // Get new customers
     const customers = await prisma.customer.findMany({
-      where: {
-        dateUsed: {
-          hasSome: [startOfMonth]
-        }
-      },
       select: {
         id: true,
         name: true,
@@ -97,9 +125,15 @@ export async function GET(request: Request) {
       },
     });
 
-    const newCustomers = customers.filter((customer) => {
-      const firstVisit = new Date(Math.min(...customer.dateUsed.map(d => d.getTime())));
-      return firstVisit >= startOfMonth && firstVisit <= endOfMonth;
+    // Filter to find customers whose earliest dateUsed is in the current month
+    const newCustomers = customers.filter(customer => {
+      if (!customer.dateUsed || customer.dateUsed.length === 0) return false;
+      
+      // Find the earliest date for this customer
+      const earliestDate = new Date(Math.min(...customer.dateUsed.map(d => d.getTime())));
+      
+      // Check if this earliest date falls within our target month
+      return earliestDate >= startOfMonth && earliestDate <= endOfMonth;
     });
 
     // Calculate month-over-month changes
@@ -111,6 +145,9 @@ export async function GET(request: Request) {
       revenue: currentRevenue,
       previousRevenue: previousRevenue,
       revenueChange: revenueChange,
+      customer427Spending: currentSpending,
+      customer427PrevSpending: previousSpending,
+      customer427SpendingChange: spendingChange,
       newCustomers: newCustomers.map(customer => ({
         id: customer.id,
         name: customer.name,

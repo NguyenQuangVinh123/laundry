@@ -20,6 +20,9 @@ interface AnalyticsData {
   revenue: number;
   previousRevenue: number;
   revenueChange: number;
+  customer427Spending: number;
+  customer427PrevSpending: number;
+  customer427SpendingChange: number;
   newCustomers: Customer[];
   totalNewCustomers: number;
   allMonthsData: MonthData[];
@@ -68,148 +71,205 @@ export default function AnalyticsPage() {
   }, [selectedMonth, selectedYear]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Monthly Analytics</h1>
-
-      {/* Month/Year Selector */}
-      <div className="flex gap-4 mb-8">
-        <select
-          className="p-2 border rounded"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        >
-          {months.map((month, index) => (
-            <option key={month} value={index}>
-              {month}
-            </option>
-          ))}
-        </select>
-        <select
-          className="p-2 border rounded"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-        >
-          {Array.from(
-            { length: 2 },
-            (_, i) => new Date().getFullYear() - i
-          ).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
+    <div className="container mx-auto px-4 py-4 sm:py-8 max-w-7xl">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Monthly Analytics</h1>
+        
+        {/* Month/Year Selector with better mobile styling */}
+        <div className="flex gap-2 sm:gap-4 w-full sm:w-auto">
+          <select
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 border rounded-lg bg-white shadow-sm hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm sm:text-base"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(Number(e.target.value))}
+          >
+            {months.map((month, index) => (
+              <option key={month} value={index}>
+                {month}
+              </option>
+            ))}
+          </select>
+          <select
+            className="flex-1 sm:flex-none px-3 sm:px-4 py-2 border rounded-lg bg-white shadow-sm hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm sm:text-base"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+          >
+            {Array.from(
+              { length: 2 },
+              (_, i) => new Date().getFullYear() - i
+            ).map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="flex justify-center items-center h-48 sm:h-64">
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-blue-500 border-t-transparent"></div>
         </div>
       ) : (
-        <div className="space-y-8">
-          {/* Current Month Overview */}
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">
-                Current Month Overview
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-gray-600">Revenue</p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-3xl font-bold text-blue-600">
-                      {analyticsData?.revenue?.toLocaleString() || 0} VNĐ
+        <div className="space-y-4 sm:space-y-8">
+          {/* Overview Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+            {/* Revenue Card */}
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Revenue Overview</h2>
+                  <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium">
+                    Current Month
+                  </span>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <p className="text-2xl sm:text-4xl font-bold text-blue-600">
+                        {analyticsData?.revenue?.toLocaleString() || 0} VNĐ
+                      </p>
+                      {analyticsData?.revenueChange !== undefined &&
+                        analyticsData.revenueChange !== 0 && (
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                              analyticsData.revenueChange > 0
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {analyticsData.revenueChange > 0 ? "↑" : "↓"}
+                            {Math.abs(analyticsData.revenueChange).toFixed(1)}%
+                          </span>
+                        )}
+                    </div>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                      Previous Month: {analyticsData?.previousRevenue?.toLocaleString() || 0} VNĐ
                     </p>
-                    {analyticsData?.revenueChange !== undefined &&
-                      analyticsData.revenueChange !== 0 && (
-                        <span
-                          className={`text-sm font-semibold ${
-                            analyticsData.revenueChange > 0
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {analyticsData.revenueChange > 0 ? "↑" : "↓"}
-                          {Math.abs(analyticsData.revenueChange).toFixed(1)}%
-                        </span>
-                      )}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Previous Month:{" "}
-                    {analyticsData?.previousRevenue?.toLocaleString() || 0} VNĐ
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">New Customers</p>
-                  <p className="text-3xl font-bold text-green-600">
-                    {analyticsData?.totalNewCustomers || 0}
-                  </p>
                 </div>
               </div>
             </div>
-            {/* New Customers List */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">New Customers</h2>
-              <div className="overflow-auto max-h-[400px]">
-                {analyticsData?.newCustomers &&
-                analyticsData.newCustomers.length > 0 ? (
-                  <table className="min-w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          First Visit
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {analyticsData.newCustomers.map((customer) => (
-                        <tr key={customer.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {customer.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {formatDate(new Date(customer.dateCreated))}
-                          </td>
+
+            {/* Customer 427 Spending Card */}
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Tổng Chi Tiêu</h2>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <p className="text-2xl sm:text-4xl font-bold text-yellow-600">
+                        {analyticsData?.customer427Spending?.toLocaleString() || 0} VNĐ
+                      </p>
+                      {analyticsData?.customer427SpendingChange !== undefined &&
+                        analyticsData.customer427SpendingChange !== 0 && (
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs sm:text-sm font-semibold ${
+                              analyticsData.customer427SpendingChange > 0
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {analyticsData.customer427SpendingChange > 0 ? "↑" : "↓"}
+                            {Math.abs(analyticsData.customer427SpendingChange).toFixed(1)}%
+                          </span>
+                        )}
+                    </div>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                      Tháng trước: {analyticsData?.customer427PrevSpending?.toLocaleString() || 0} VNĐ
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* New Customers List Card */}
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="p-4 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">New Customers</h2>
+                  <span className="px-2 sm:px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs sm:text-sm font-medium">
+                    {analyticsData?.totalNewCustomers || 0} Total
+                  </span>
+                </div>
+                <div className="overflow-auto max-h-[200px] sm:max-h-[300px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                  {analyticsData?.newCustomers &&
+                  analyticsData.newCustomers.length > 0 ? (
+                    <table className="min-w-full">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Name
+                          </th>
+                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            First Visit
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="text-gray-500">No new customers this month</p>
-                )}
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {analyticsData.newCustomers.map((customer) => (
+                          <tr key={customer.id} className="hover:bg-gray-50">
+                            <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                              {customer.name}
+                            </td>
+                            <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
+                              {formatDate(new Date(customer.dateCreated))}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="flex items-center justify-center h-24 sm:h-32 text-sm text-gray-500">
+                      No new customers this month
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            {/* Historical Data */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Historical Revenue</h2>
-              <div className="space-y-3 max-h-[300px] overflow-y-auto">
+          </div>
+
+          {/* Historical Data Card */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Historical Revenue</h2>
+                <span className="px-2 sm:px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs sm:text-sm font-medium">
+                  Last 12 Months
+                </span>
+              </div>
+              <div className="space-y-3 max-h-[300px] sm:max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                 {analyticsData?.allMonthsData &&
                 analyticsData.allMonthsData.length > 0 ? (
-                  analyticsData.allMonthsData.map((monthData: MonthData) => (
-                    <div
-                      key={monthData.month}
-                      className="flex justify-between items-center p-2 hover:bg-gray-50 rounded"
-                    >
-                      <span className="text-gray-600">
-                        {new Date(monthData.month).toLocaleDateString("en-US", {
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </span>
-                      <div className="flex gap-4">
-                        <span className="text-blue-600 font-semibold">
-                          {monthData.total.toLocaleString()} VNĐ
+                  <div className="grid gap-3 sm:gap-4">
+                    {analyticsData.allMonthsData.map((monthData: MonthData) => (
+                      <div
+                        key={monthData.month}
+                        className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <span className="text-sm sm:text-base text-gray-700 font-medium mb-2 sm:mb-0">
+                          {new Date(monthData.month).toLocaleDateString("en-US", {
+                            month: "long",
+                            year: "numeric",
+                          })}
                         </span>
-                        <span className="text-gray-500">
-                          ({monthData.customer_count} customers)
-                        </span>
+                        <div className="flex flex-wrap gap-2 sm:gap-6 items-center">
+                          <span className="text-sm sm:text-base text-blue-600 font-semibold">
+                            {monthData.total.toLocaleString()} VNĐ
+                          </span>
+                          <span className="px-2 sm:px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs sm:text-sm">
+                            {monthData.customer_count} customers
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 ) : (
-                  <p className="text-gray-500">No historical data available</p>
+                  <div className="flex items-center justify-center h-24 sm:h-32 text-sm text-gray-500">
+                    No historical data available
+                  </div>
                 )}
               </div>
             </div>
