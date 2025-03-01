@@ -119,9 +119,6 @@ export default function AnalyticsPage() {
               <div className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Revenue Overview</h2>
-                  <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium">
-                    Current Month
-                  </span>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -155,7 +152,7 @@ export default function AnalyticsPage() {
             <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Tổng Chi Tiêu</h2>
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Total Expenses</h2>
                 </div>
                 <div className="space-y-4">
                   <div>
@@ -178,7 +175,7 @@ export default function AnalyticsPage() {
                         )}
                     </div>
                     <p className="text-xs sm:text-sm text-gray-500 mt-2">
-                      Tháng trước: {analyticsData?.customer427PrevSpending?.toLocaleString() || 0} VNĐ
+                        Previous Month: {analyticsData?.customer427PrevSpending?.toLocaleString() || 0} VNĐ
                     </p>
                   </div>
                 </div>
