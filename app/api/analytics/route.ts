@@ -78,8 +78,9 @@ export async function GET(request: Request) {
     // Get monthly data for the last 12 months
     const last12Months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
+      d.setDate(1); // Đặt ngày về 1 để tránh lỗi ngày tháng
       d.setMonth(d.getMonth() - i);
-      return d;
+      return new Date(d); // Tạo một bản sao để không bị thay đổi ngoài ý muốn
     });
 
     const monthlyData = await Promise.all(
