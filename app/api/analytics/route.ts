@@ -56,6 +56,20 @@ export async function GET(request: Request) {
       },
     });
 
+    // Get detailed bills for customer 427 in current month
+    const customer427Bills = await prisma.bill.findMany({
+      where: {
+        customerId: 427,
+        dateCreated: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      orderBy: {
+        dateCreated: 'desc',
+      },
+    });
+
     // Get previous month spending for customer 427
     const customer427PrevSpending = await prisma.bill.aggregate({
       _sum: {
@@ -149,6 +163,7 @@ export async function GET(request: Request) {
       customer427Spending: currentSpending,
       customer427PrevSpending: previousSpending,
       customer427SpendingChange: spendingChange,
+      customer427Bills: customer427Bills,
       newCustomers: newCustomers.map(customer => ({
         id: customer.id,
         name: customer.name,

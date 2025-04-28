@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateNotHour } from "@/lib/utils";
 
 interface Customer {
   id: string;
@@ -23,6 +23,12 @@ interface AnalyticsData {
   customer427Spending: number;
   customer427PrevSpending: number;
   customer427SpendingChange: number;
+  customer427Bills: {
+    id: number;
+    amount: number;
+    dateCreated: string;
+    note: string;
+  }[];
   newCustomers: Customer[];
   totalNewCustomers: number;
   allMonthsData: MonthData[];
@@ -178,6 +184,39 @@ export default function AnalyticsPage() {
                         Previous Month: {analyticsData?.customer427PrevSpending?.toLocaleString() || 0} VNĐ
                     </p>
                   </div>
+                  {/* Expenses List */}
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                        {analyticsData?.customer427Bills?.length || 0} Expenses
+                      </span>
+                    </div>
+                    <div className="overflow-auto max-h-[350px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      {analyticsData?.customer427Bills && analyticsData.customer427Bills.length > 0 ? (
+                        <div className="space-y-2">
+                          {analyticsData.customer427Bills.map((bill) => (
+                            <div key={bill.id} className="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100">
+                              <div className="flex-1">
+                                <span className="text-xs text-gray-900">{formatDateNotHour(new Date(bill.dateCreated))}</span>
+                              </div>
+                              <div className="flex-1 text-left">
+                                <span className="text-xs font-medium text-gray-900">{bill.amount.toLocaleString()} VNĐ</span>
+                              </div>
+                              {bill.note && (
+                                <div className="flex-1 text-left">
+                                  <span className="text-xs text-gray-500">{bill.note}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-16 text-xs text-gray-500">
+                          No bills for this month
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -191,7 +230,7 @@ export default function AnalyticsPage() {
                     {analyticsData?.totalNewCustomers || 0} Total
                   </span>
                 </div>
-                <div className="overflow-auto max-h-[200px] sm:max-h-[300px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                <div className="overflow-auto max-h-[300px] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   {analyticsData?.newCustomers &&
                   analyticsData.newCustomers.length > 0 ? (
                     <table className="min-w-full">
