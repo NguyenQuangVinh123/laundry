@@ -15,7 +15,7 @@ export default function EditButton({ id }: EditButtonProps) {
   const [value, setValue, removeValue] = useLocalStorage("isAdmin", false);
 
   return (
-    <td className="cursor-pointer">
+    <div className="cursor-pointer">
       {value && (
         <div className="flex gap-2 items-center">
           {/* Edit Icon */}
@@ -71,7 +71,7 @@ export default function EditButton({ id }: EditButtonProps) {
           </svg>
         </div>
       )}
-    </td>
+    </div>
 
   );
 }

@@ -20,7 +20,7 @@ const Contacts = async ({
         <Search />
         <CreateButton link="/contacts/create" />
       </div>
-      <Suspense key={query} fallback={<TableSkeleton />}>
+      <Suspense key={`${query}-${date}`} fallback={<TableSkeleton />}>
         <ContactTable query={query} date={date} />
       </Suspense>
     </div>
