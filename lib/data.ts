@@ -19,7 +19,6 @@ export const getBills = async (query: string, date?: string) => {
         lte: endOfDay,
       },
     };
-    console.log(query, 'query')
     const contacts = await prisma.bill.findMany({
       where: {
         customer: {
@@ -28,7 +27,7 @@ export const getBills = async (query: string, date?: string) => {
             mode: "insensitive"
           }
         },
-        ...(query ? date ? dateFilter : {} : dateFilter),
+        ...(query ? (date ? dateFilter : {}) : dateFilter),
       },
       include: {
         customer: {
@@ -154,7 +153,6 @@ export const getTotalByDayOfMonth = async () => {
     throw new Error("Failed to fetch daily totals up to the current date");
   }
 };
-
 export const getBillById = async (billId: number) => {
   try {
     const bill = await prisma.bill.findUnique({

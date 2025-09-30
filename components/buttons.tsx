@@ -26,7 +26,7 @@ export const SubmitButton = ({
 }) => {
   const { pending } = useFormStatus();
   const className = clsx(
-    "text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-sm text-sm w-full px-5 py-3 text-center",
+    "w-full py-3 text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 rounded-md transition-all duration-300 ease-in-out",
     {
       "opacity-50": disabled || pending,
     }

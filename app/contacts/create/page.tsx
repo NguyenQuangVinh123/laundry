@@ -2,7 +2,6 @@ import CreateForm from "@/components/create-form";
 import { getBillById, getCustomers } from "@/lib/data";
 
 const CreateContactPage = async ({
-  params,
   searchParams,
 }: {
   params: { [key: string]: string };

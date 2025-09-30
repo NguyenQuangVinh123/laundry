@@ -62,7 +62,7 @@ export const saveCustomer = async (prevSate: any, formData: FormData) => {
 export const updateContact = async (prevSate: any, formData: FormData) => {
  
   try {
-    await prisma.bill.updateMany({
+    await prisma.bill.update({
       where: { id: Number(formData.get("id")) },
       data: {
         amount: Number(formData.get("amount")),
