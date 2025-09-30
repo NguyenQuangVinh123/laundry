@@ -8,13 +8,15 @@ export default function Total({
   totalMonth,
   totalDate,
   totalByDateOfMonth,
+  totalBill,
 }: {
   totalMonth: number;
   totalDate: number;
   totalByDateOfMonth: any;
+  totalBill: number;
 }) {
   const [totalMonthShow, setTotalMonth] = useState<string | number>(totalMonth);
-
+  const [totalBillShow, setTotalBill] = useState<string | number>(totalBill);
   const [totalDateShow, setTotalDateMonth] = useState<string | number>(
     totalDate
   );
@@ -29,6 +31,7 @@ export default function Total({
       setTotalByDateOfMonthS(totalByDateOfMonth);
       setTotalMonth(totalMonth);
       setTotalDateMonth(totalDate);
+      setTotalBill(totalBill);
       setValue(true);
       location.reload();
     }
@@ -72,11 +75,19 @@ export default function Total({
             Analytics
           </Link>
           <div className="flex gap-1 flex-col">
-            <div>
+            <div className="flex gap-2">
+              <div>
               Total Date:{" "}
               <span className="text-xl font-bold text-red-500">
                 {totalDateShow}
               </span>
+              </div>
+             <div>
+              Total Bill:{" "}
+              <span className="text-xl font-bold text-red-500">
+                {totalBillShow}
+              </span>
+             </div>
             </div>
             <div>
               Total Month:{" "}

@@ -19,12 +19,14 @@ const ContactTable = async ({
   const totalMonth = await getTotalMonth();
   const totalDate = await getTotalDate();
   const totalByDateOfMonth = await getTotalByDayOfMonth();
+  const totalBill = contacts.length;
   return (
     <>
       <Total
         totalMonth={totalMonth || 0}
         totalByDateOfMonth={totalByDateOfMonth || 0}
         totalDate={totalDate || 0}
+        totalBill={totalBill}
       />
       <table className="w-full m-auto border border-gray-300 shadow-lg rounded-lg overflow-hidden">
         {/* Table Header */}
