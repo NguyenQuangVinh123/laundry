@@ -93,6 +93,7 @@ export async function GET(request: Request) {
     const last12Months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
       d.setDate(1); // Đặt ngày về 1 để tránh lỗi ngày tháng
+      d.setHours(0, 0, 0, 0);
       d.setMonth(d.getMonth() - i);
       return new Date(d); // Tạo một bản sao để không bị thay đổi ngoài ý muốn
     });
@@ -100,7 +101,9 @@ export async function GET(request: Request) {
     const monthlyData = await Promise.all(
       last12Months.map(async (date) => {
         const start = new Date(date.getFullYear(), date.getMonth(), 1);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        end.setHours(23, 59, 59, 999);
 
         const monthData = await prisma.bill.aggregate({
           _sum: {
