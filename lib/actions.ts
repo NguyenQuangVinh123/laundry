@@ -94,3 +94,57 @@ export const deleteContact = async (customerId: number) => {
     return { message: "Failed to delete contact" };
   }
 };
+
+export const saveFixedExpense = async (prevState: any, formData: FormData) => {
+  try {
+    const amount = Number(formData.get("amount"));
+    const month = Number(formData.get("month"));
+    const year = Number(formData.get("year"));
+
+    if (isNaN(amount) || isNaN(month) || isNaN(year)) {
+      return { message: "Invalid input data" };
+    }
+
+    // Use upsert to create or update fixed expense for the month/year
+    await prisma.fixedExpense.upsert({
+      where: {
+        month_year: {
+          month: month,
+          year: year,
+        },
+      },
+      update: {
+        amount: amount,
+      },
+      create: {
+        amount: amount,
+        month: month,
+        year: year,
+      },
+    });
+
+    revalidatePath("/analytics");
+    return { success: true, message: "Fixed expense saved successfully" };
+  } catch (error) {
+    console.error("Failed to save fixed expense:", error);
+    return { message: "Failed to save fixed expense" };
+  }
+};
+
+export const getFixedExpense = async (month: number, year: number) => {
+  try {
+    const expense = await prisma.fixedExpense.findUnique({
+      where: {
+        month_year: {
+          month: month,
+          year: year,
+        },
+      },
+    });
+
+    return expense;
+  } catch (error) {
+    console.error("Failed to get fixed expense:", error);
+    return null;
+  }
+};

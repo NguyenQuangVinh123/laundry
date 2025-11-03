@@ -10,11 +10,15 @@ export async function GET(request: Request) {
 
     // Get start and end of the current month
     const startOfMonth = new Date(Number(year), Number(month), 1);
+    startOfMonth.setHours(0, 0, 0, 0);
     const endOfMonth = new Date(Number(year), Number(month) + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
 
     // Get start and end of the previous month
     const startOfPrevMonth = new Date(Number(year), Number(month) - 1, 1);
+    startOfPrevMonth.setHours(0, 0, 0, 0);
     const endOfPrevMonth = new Date(Number(year), Number(month), 0);
+    endOfPrevMonth.setHours(23, 59, 59, 999);
 
     // Get current month revenue
     const monthlyRevenue = await prisma.bill.aggregate({
@@ -154,6 +158,16 @@ export async function GET(request: Request) {
       return earliestDate >= startOfMonth && earliestDate <= endOfMonth;
     });
 
+    // Get fixed expense for the selected month/year
+    const fixedExpense = await prisma.fixedExpense.findUnique({
+      where: {
+        month_year: {
+          month: Number(month),
+          year: Number(year),
+        },
+      },
+    });
+
     // Calculate month-over-month changes
     const currentRevenue = monthlyRevenue._sum.amount || 0;
     const previousRevenue = prevMonthRevenue._sum.amount || 0;
@@ -174,6 +188,12 @@ export async function GET(request: Request) {
       })),
       totalNewCustomers: newCustomers.length,
       allMonthsData: nonZeroMonths,
+      fixedExpense: fixedExpense ? {
+        id: fixedExpense.id,
+        amount: fixedExpense.amount,
+        month: fixedExpense.month,
+        year: fixedExpense.year,
+      } : null,
     });
   } catch (error) {
     console.error("Error in analytics:", error);

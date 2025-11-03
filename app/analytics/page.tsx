@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { formatDate, formatDateNotHour } from "@/lib/utils";
+import { saveFixedExpense } from "@/lib/actions";
+import { useFormState } from "react-dom";
 
 interface Customer {
   id: string;
@@ -14,6 +16,13 @@ interface MonthData {
   month: string;
   total: number;
   customer_count: number;
+}
+
+interface FixedExpense {
+  id: number;
+  amount: number;
+  month: number;
+  year: number;
 }
 
 interface AnalyticsData {
@@ -32,15 +41,19 @@ interface AnalyticsData {
   newCustomers: Customer[];
   totalNewCustomers: number;
   allMonthsData: MonthData[];
+  fixedExpense: FixedExpense | null;
 }
 
 export default function AnalyticsPage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [fixedExpenseAmount, setFixedExpenseAmount] = useState("");
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(
     null
   );
   const [loading, setLoading] = useState(true);
+
+  const [formState, formAction] = useFormState(saveFixedExpense, null);
 
   const months = [
     "January",
@@ -75,6 +88,13 @@ export default function AnalyticsPage() {
   useEffect(() => {
     fetchAnalytics();
   }, [selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    if (formState?.success) {
+      setFixedExpenseAmount("");
+      fetchAnalytics();
+    }
+  }, [formState]);
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8 max-w-7xl">
@@ -151,6 +171,50 @@ export default function AnalyticsPage() {
                     </p>
                   </div>
                 </div>
+                <div className="flex items-center justify-between mb-4 mt-2">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Profit Overview</h2>
+                </div>
+                {analyticsData?.fixedExpense ? (
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <p className="text-2xl sm:text-4xl font-bold text-green-600">
+                          {(analyticsData?.revenue - analyticsData?.fixedExpense?.amount).toLocaleString()} VNĐ
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-500 mt-2">
+                          Fixed expense: {analyticsData?.fixedExpense?.amount.toLocaleString()} VNĐ
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <form action={formAction} className="space-y-4">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <input
+                          type="number"
+                          name="amount"
+                          value={fixedExpenseAmount}
+                          onChange={(e) => setFixedExpenseAmount(e.target.value)}
+                          placeholder="Fixed expense this month"
+                          required
+                          className="flex-1 min-w-[150px] px-3 py-2 border rounded-lg bg-white shadow-sm hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm sm:text-base"
+                        />
+                        <input type="hidden" name="month" value={selectedMonth} />
+                        <input type="hidden" name="year" value={selectedYear} />
+                        <button
+                          type="submit"
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors whitespace-nowrap"
+                        >
+                          Save
+                        </button>
+                      </div>
+                      {formState?.message && !formState.success && (
+                        <p className="text-sm text-red-500 mt-2">{formState.message}</p>
+                      )}
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
 

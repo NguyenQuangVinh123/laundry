@@ -34,3 +34,13 @@ model Bill {
   customer    Customer @relation(fields: [customerId], references: [id])
   note        String   @default("")
 }
+
+model FixedExpense {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  month       Int      // 0-11 for January-December
+  year        Int
+  dateCreated DateTime @default(now())
+  
+  @@unique([month, year])
+}
