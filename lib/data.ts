@@ -142,9 +142,19 @@ export const getTotalByDayOfMonth = async () => {
         },
       });
 
+      const totalBill = await prisma.bill.count({
+        where: {
+          dateCreated: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+        },
+      });
+
       dailyTotals.push({
         date: startOfDay,
         total: totalAmount._sum.amount || 0,
+        totalBill: totalBill,
       });
     }
 

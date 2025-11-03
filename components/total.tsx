@@ -136,7 +136,7 @@ export default function Total({
                 >
                   <div className="flex-1 font-medium">{formatDate(i.date)}</div>
                   <div className="flex-1 text-right font-semibold text-blue-600">
-                    {i.total}
+                    {i.total} <span className=" text-red-400">({i.totalBill} bills)</span>
                   </div>
                 </div>
               ))}
