@@ -5,20 +5,17 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const month = searchParams.get("month") ?? new Date().getMonth();
-    const year = searchParams.get("year") ?? new Date().getFullYear();
+    const currentDate = new Date();
+    const month = searchParams.get("month") ?? currentDate.getUTCMonth();
+    const year = searchParams.get("year") ?? currentDate.getUTCFullYear();
 
     // Get start and end of the current month
-    const startOfMonth = new Date(Number(year), Number(month), 1);
-    startOfMonth.setHours(0, 0, 0, 0);
-    const endOfMonth = new Date(Number(year), Number(month) + 1, 0);
-    endOfMonth.setHours(23, 59, 59, 999);
+    const startOfMonth = new Date(Date.UTC(Number(year), Number(month), 1, 0, 0, 0));
+    const endOfMonth = new Date(Date.UTC(Number(year), Number(month) + 1, 0, 23, 59, 59, 999));
 
     // Get start and end of the previous month
-    const startOfPrevMonth = new Date(Number(year), Number(month) - 1, 1);
-    startOfPrevMonth.setHours(0, 0, 0, 0);
-    const endOfPrevMonth = new Date(Number(year), Number(month), 0);
-    endOfPrevMonth.setHours(23, 59, 59, 999);
+    const startOfPrevMonth = new Date(Date.UTC(Number(year), Number(month) - 1, 1, 0, 0, 0));
+    const endOfPrevMonth = new Date(Date.UTC(Number(year), Number(month), 0, 23, 59, 59, 999));
 
     // Get current month revenue
     const monthlyRevenue = await prisma.bill.aggregate({
@@ -96,18 +93,17 @@ export async function GET(request: Request) {
     // Get monthly data for the last 12 months
     const last12Months = Array.from({ length: 12 }, (_, i) => {
       const d = new Date();
-      d.setDate(1); // Đặt ngày về 1 để tránh lỗi ngày tháng
-      d.setHours(0, 0, 0, 0);
-      d.setMonth(d.getMonth() - i);
-      return new Date(d); // Tạo một bản sao để không bị thay đổi ngoài ý muốn
+      const year = d.getUTCFullYear();
+      const month = d.getUTCMonth() - i;
+      return new Date(Date.UTC(year, month, 1, 0, 0, 0));
     });
 
     const monthlyData = await Promise.all(
       last12Months.map(async (date) => {
-        const start = new Date(date.getFullYear(), date.getMonth(), 1);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        end.setHours(23, 59, 59, 999);
+        const year = date.getUTCFullYear();
+        const month = date.getUTCMonth();
+        const start = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+        const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
 
         const monthData = await prisma.bill.aggregate({
           _sum: {

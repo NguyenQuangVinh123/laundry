@@ -10,8 +10,8 @@ export const getBills = async (query: string, date?: string) => {
       endOfDay = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 23, 59, 59, 999));
     } else {
       const currentDate = new Date();
-      startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
-      endOfDay = new Date(currentDate.setHours(23, 59, 59, 999));
+      startOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0));
+      endOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 23, 59, 59, 999));
     }
     const dateFilter = {
       dateCreated: {
@@ -69,8 +69,9 @@ export const getCustomers = async (query: string) => {
 
 export const getTotalMonth = async () => {
   try {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+    const currentDate = new Date();
+    const startOfMonth = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), 1, 0, 0, 0));
+    const endOfMonth = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth() + 1, 1, 0, 0, 0));
 
     const totalAmount = await prisma.bill.aggregate({
       _sum: {
@@ -91,11 +92,9 @@ export const getTotalMonth = async () => {
 
 export const getTotalDate = async () => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0); // Set to midnight (start of the day)
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999); // Set to the last millisecond of the day
+    const currentDate = new Date();
+    const startOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 23, 59, 59, 999));
 
     const totalAmount = await prisma.bill.aggregate({
       _sum: {
@@ -117,18 +116,15 @@ export const getTotalDate = async () => {
 export const getTotalByDayOfMonth = async () => {
   try {
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-    const currentDay = currentDate.getDate(); // Get current day of the month
+    const currentMonth = currentDate.getUTCMonth();
+    const currentYear = currentDate.getUTCFullYear();
+    const currentDay = currentDate.getUTCDate(); // Get current day of the month
 
     const dailyTotals = [];
 
     for (let day = 1; day <= currentDay; day++) { // Loop only up to the current day
-      const startOfDay = new Date(currentYear, currentMonth, day);
-      startOfDay.setHours(0, 0, 0, 0);
-
-      const endOfDay = new Date(currentYear, currentMonth, day);
-      endOfDay.setHours(23, 59, 59, 999);
+      const startOfDay = new Date(Date.UTC(currentYear, currentMonth, day, 0, 0, 0));
+      const endOfDay = new Date(Date.UTC(currentYear, currentMonth, day, 23, 59, 59, 999));
 
       const totalAmount = await prisma.bill.aggregate({
         _sum: {
