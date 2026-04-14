@@ -1,5 +1,5 @@
 "use client";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatWeekdayVi } from "@/lib/utils";
 import React, { useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import Link from "next/link";
@@ -134,7 +134,12 @@ export default function Total({
                   key={index}
                   className="flex justify-between py-3 border-b last:border-none text-gray-700"
                 >
-                  <div className="flex-1 font-medium">{formatDate(i.date)}</div>
+                  <div className="flex-1 font-medium">
+                    {formatDate(i.date)}{" "}
+                    <span className="text-gray-500">
+                      ({formatWeekdayVi(i.date)})
+                    </span>
+                  </div>
                   <div className="flex-1 text-right font-semibold text-blue-600">
                     {i.total} <span className=" text-red-400">({i.totalBill} bills)</span>
                   </div>

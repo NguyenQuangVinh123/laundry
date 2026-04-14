@@ -13,6 +13,26 @@ export const formatDate = (dateStr: Date) => {
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 
+/** Thứ trong tuần (VN), cùng offset múi giờ với formatDate */
+const VI_WEEKDAYS = [
+  "Chủ nhật",
+  "Thứ 2",
+  "Thứ 3",
+  "Thứ 4",
+  "Thứ 5",
+  "Thứ 6",
+  "Thứ 7",
+] as const;
+
+export const formatWeekdayVi = (dateStr: Date) => {
+  const date = new Date(
+    dateStr.getTime() +
+      dateStr.getTimezoneOffset() * 60000 +
+      7 * 60 * 60000
+  );
+  return VI_WEEKDAYS[date.getDay()];
+};
+
 export const formatDateNotHour = (dateStr: Date) => {
   const date = new Date(dateStr.getTime() + dateStr.getTimezoneOffset() * 60000 + (7 * 60 * 60000));
   // Extract date components
