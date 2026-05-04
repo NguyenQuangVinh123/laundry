@@ -17,7 +17,7 @@ const ContactTable = async ({
 }) => {
   const contacts = await getBills(query, date);
   const totalMonth = await getTotalMonth();
-  const totalDate = await getTotalDate();
+  const totalDate = await getTotalDate(date || undefined);
   const totalByDateOfMonth = await getTotalByDayOfMonth();
   const totalBill = contacts.length;
   return (

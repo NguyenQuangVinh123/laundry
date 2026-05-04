@@ -43,3 +43,17 @@ export const formatDateNotHour = (dateStr: Date) => {
   // Format as DD/MM/YYYY hh:mm
   return `${day}/${month}/${year}`;
 };
+
+export const getUtcDayBounds = (date?: string) => {
+  const trimmed = date?.trim();
+  let d: Date;
+  if (trimmed) {
+    const parsed = new Date(trimmed);
+    d = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  } else {
+    d = new Date();
+  }
+  const startOfDay = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59, 999));
+  return { startOfDay, endOfDay };
+};

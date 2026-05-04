@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-
+import { getUtcDayBounds } from "@/lib/utils";
 
 export const getBills = async (query: string, date?: string) => {
   try {
@@ -90,11 +90,9 @@ export const getTotalMonth = async () => {
   }
 };
 
-export const getTotalDate = async () => {
+export const getTotalDate = async (date?: string) => {
   try {
-    const currentDate = new Date();
-    const startOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 23, 59, 59, 999));
+    const { startOfDay, endOfDay } = getUtcDayBounds(date);
 
     const totalAmount = await prisma.bill.aggregate({
       _sum: {
@@ -103,7 +101,7 @@ export const getTotalDate = async () => {
       where: {
         dateCreated: {
           gte: startOfDay,
-          lt: endOfDay,
+          lte: endOfDay,
         },
       },
     });
