@@ -4,14 +4,36 @@ import { saveContact, updateContact } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { SubmitButton } from "@/components/buttons";
 import CreatableSelect from "react-select/creatable";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { normalizeForSearch } from "@/lib/utils";
+
+type CustomerOption = { value: number; label: string };
+
+const filterCustomerOption = (
+  option: { label: string; value: number | string },
+  inputValue: string
+) => {
+  if (!inputValue.trim()) return true;
+  return normalizeForSearch(option.label).includes(
+    normalizeForSearch(inputValue)
+  );
+};
+
 const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
   const action = bill ? updateContact : saveContact;
   const [state, formAction] = useFormState(action, bill);
-  const mappingCustomer = customers.map((i: any) => ({
-    value: i.id,
-    label: i.name,
-  }));
+  const mappingCustomer = useMemo<CustomerOption[]>(
+    () =>
+      customers
+        .map((i: { id: number; name: string }) => ({
+          value: i.id,
+          label: i.name,
+        }))
+        .sort((a: CustomerOption, b: CustomerOption) =>
+          a.label.localeCompare(b.label, "vi")
+        ),
+    [customers]
+  );
   const [form, setForm] = useState({
     customerId: "",
     amount: "",
@@ -34,11 +56,14 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
       [name]: value,
     }));
   };
-  const handleSelectChange = (e: any) => {
-    const { value } = e;
+  const handleSelectChange = (e: { value: number | string; label: string } | null) => {
+    if (!e) {
+      setForm((prev) => ({ ...prev, customerId: "" }));
+      return;
+    }
     setForm((prevForm) => ({
       ...prevForm,
-      customerId: value,
+      customerId: String(e.value),
     }));
   };
   const isFormValid = () => {
@@ -62,9 +87,18 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
           <CreatableSelect
             onChange={handleSelectChange}
             options={mappingCustomer}
-            name="customerId"
-            isClearable={true}
+            isClearable
+            placeholder="Gõ tên khách để tìm…"
+            noOptionsMessage={() => "Không thấy — Enter để tạo khách mới"}
+            formatCreateLabel={(input) => `Tạo khách: "${input}"`}
+            filterOption={filterCustomerOption}
             className="mt-1 text-sm border rounded-md w-full focus:ring-blue-500 focus:border-blue-500"
+            classNamePrefix="customer-select"
+          />
+          <input
+            type="hidden"
+            name="customerId"
+            value={form.customerId}
           />
         </div>
       )}
