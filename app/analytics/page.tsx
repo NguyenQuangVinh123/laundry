@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { formatDate, formatDateNotHour } from "@/lib/utils";
 import { saveFixedExpense } from "@/lib/actions";
 import { useFormState } from "react-dom";
+import BackToContacts from "@/components/back-to-contacts";
 
 interface Customer {
   id: string;
@@ -98,6 +99,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8 max-w-7xl">
+      <BackToContacts />
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Monthly Analytics</h1>
