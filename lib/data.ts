@@ -3,10 +3,18 @@ import { getUtcDayBounds, normalizeForSearch } from "@/lib/utils";
 
 export const getBills = async (query: string, date?: string) => {
   try {
-    const { startOfDay, endOfDay } = getUtcDayBounds(date?.trim() || undefined);
+    let startOfDay, endOfDay;
+    if (date) {
+      const selectedDate = new Date(date);
+      startOfDay = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 0, 0, 0));
+      endOfDay = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate(), 23, 59, 59, 999));
+    } else {
+      const currentDate = new Date();
+      startOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0));
+      endOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 23, 59, 59, 999));
+    }
     const searchTerm = query.trim();
 
-    // Tên: so khớp không dấu / không phân biệt hoa thường (Prisma contains không làm được)
     let customerIds: number[] | undefined;
     if (searchTerm) {
       const customers = await prisma.customer.findMany({
@@ -23,17 +31,25 @@ export const getBills = async (query: string, date?: string) => {
         return [];
       }
     }
-
-    return prisma.bill.findMany({
-      where: {
-        dateCreated: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-        ...(customerIds ? { customerId: { in: customerIds } } : {}),
+    const dateFilter = {
+      dateCreated: {
+        gte: startOfDay,
+        lte: endOfDay,
       },
+    }
+    const where = {
+      ...(query ? (date ? dateFilter : {}) : dateFilter),
+      ...(customerIds ? { customerId: { in: customerIds } } : {}),
+    }
+    return prisma.bill.findMany({
+      where,
       include: {
         customer: {
+          select: {
+            name: true,
+          },
+        },
+        createdBy: {
           select: {
             name: true,
           },

@@ -17,7 +17,7 @@ const Contacts = async ({
   const query = searchParams?.query || "";
   const date = searchParams?.date || "";
   return (
-    <div className="max-w-screen-lg mx-auto mt-5">
+    <div className="max-w-screen-lg mx-auto">
       <div className="flex items-center justify-between gap-2 p-2 max-w-sm m-auto">
         <Search />
         <CreateButton link="/contacts/create" />
