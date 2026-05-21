@@ -36,14 +36,19 @@ const ContactTable = async ({
 
   return (
     <>
-      <Total
-        showTotals={showTotals}
-        showAnalytics={showAnalytics}
-        totalMonth={totalMonth || 0}
-        totalByDateOfMonth={totalByDateOfMonth || []}
-        totalDate={totalDate || 0}
-        totalBill={totalBill}
-      />
+    {
+      showTotals && (
+        <Total
+          showTotals={showTotals}
+          showAnalytics={showAnalytics}
+          totalMonth={totalMonth || 0}
+          totalByDateOfMonth={totalByDateOfMonth || []}
+          totalDate={totalDate || 0}
+          totalBill={totalBill}
+        />
+      )
+    }
+    
       <table className="w-full m-auto border border-gray-300 shadow-lg rounded-lg overflow-hidden">
         <thead className="bg-gradient-to-r bg-pink-400 text-white text-sm uppercase">
           <tr className="text-xs md:text-lg">
@@ -53,7 +58,7 @@ const ContactTable = async ({
             <th className="px-1 py-4 lg:px-6">Total</th>
             <th className="px-1 py-4 lg:px-6">Note</th>
             {showCreator && (
-              <th className="px-1 py-4 lg:px-6">Người tạo</th>
+              <th className="px-1 py-4 lg:px-6">Created By</th>
             )}
             <th className="px-1 py-4 lg:px-6">Created</th>
           </tr>

@@ -9,7 +9,7 @@ export default function AppHeader({
   role: UserRole;
 }) {
   return (
-    <header className="max-w-screen-lg mx-auto flex items-center justify-between gap-2 px-2 py-3 mb-2">
+    <header className="max-w-screen-lg mx-auto flex items-center justify-between gap-2 px-2 pt-3">
       <div className="text-sm">
         <span className="font-medium text-gray-800">{name}</span>
         <span className="ml-2 rounded-full bg-pink-100 px-2 py-0.5 text-xs text-pink-700">

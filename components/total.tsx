@@ -20,14 +20,6 @@ export default function Total({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!showTotals) {
-    return (
-      <p className="text-sm text-gray-500 mb-4">
-        Tổng doanh thu chỉ hiển thị với quyền Giám sát / Quản trị.
-      </p>
-    );
-  }
-
   return (
     <>
       {showAnalytics && (

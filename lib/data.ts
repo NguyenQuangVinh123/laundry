@@ -33,8 +33,13 @@ export const getBills = async (query: string, date?: string) => {
         customer: {
           select: {
             name: true,
-          }
-        }
+          },
+        },
+        createdBy: {
+          select: {
+            name: true,
+          },
+        },
       },
       orderBy: {
         dateCreated: 'desc',
