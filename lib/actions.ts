@@ -4,24 +4,53 @@ import { requireSession, requireRole } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+async function resolveCustomerId(raw: string): Promise<number> {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    throw new Error("Customer is required");
+  }
+
+  const asId = Number(trimmed);
+  if (!Number.isNaN(asId) && asId > 0) {
+    const byId = await prisma.customer.findUnique({ where: { id: asId } });
+    if (byId) return byId.id;
+  }
+
+  const byName = await prisma.customer.findFirst({
+    where: {
+      name: { equals: trimmed, mode: "insensitive" },
+    },
+  });
+  if (byName) return byName.id;
+
+  const created = await prisma.customer.create({
+    data: { name: trimmed },
+  });
+  return created.id;
+}
+
 export const saveContact = async (prevSate: any, formData: FormData) => {
-  const getListCustomer = await prisma.customer.findMany()
-  const listNameCustomer = getListCustomer.map(i => i.id)
-  let customerId = Number(formData.get("customerId"))
-  if(!listNameCustomer.includes(customerId)) {
-    const res = await prisma.customer.create({
-      data: {
-        name: formData.get("customerId") as string
-      }
-    })
-    customerId = res.id
+  const session = await requireSession();
+
+  let customerId: number;
+  try {
+    customerId = await resolveCustomerId(
+      (formData.get("customerId") as string) ?? ""
+    );
+  } catch {
+    return { message: "Vui lòng chọn hoặc nhập tên khách hàng" };
+  }
+
+  const amount = Number(formData.get("amount"));
+  if (!amount || amount <= 0) {
+    return { message: "Vui lòng nhập số tiền hợp lệ" };
   }
 
   try {
     await prisma.bill.create({
       data: {
         customerId: customerId,
-        amount: Number(formData.get("amount")),
+        amount,
         note: formData.get("note")?.toString() ?? "",
         createdById: session.id,
       },

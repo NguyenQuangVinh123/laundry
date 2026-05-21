@@ -5,7 +5,7 @@ export default async function AnalyticsPage() {
   await requireRole(["ADMIN", "SUPERVISOR"]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
+    <div className="max-w-7xl mx-auto">
       <AnalyticsClient />
     </div>
   );
