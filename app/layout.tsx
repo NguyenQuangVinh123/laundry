@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import ChatBubble from "@/components/assistant/chat-bubble";
+// import ChatBubble from "@/components/assistant/chat-bubble";
 import AppHeader from "@/components/app-header";
 import { getSession } from "@/lib/auth";
 
@@ -26,7 +26,7 @@ export default async function RootLayout({
           <AppHeader name={session.name} role={session.role} />
         )}
         {children}
-        {session && <ChatBubble />}
+        {/* {session && <ChatBubble />} */}
       </body>
     </html>
   );
