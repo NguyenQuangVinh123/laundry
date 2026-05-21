@@ -1,9 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-export const dynamic = 'force-dynamic';
+import { getSession } from "@/lib/auth";
+import { canViewAnalytics } from "@/lib/permissions";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+    if (!session || !canViewAnalytics(session.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     const { searchParams } = new URL(request.url);
     const currentDate = new Date();
     const month = searchParams.get("month") ?? currentDate.getUTCMonth();
