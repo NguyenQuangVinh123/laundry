@@ -1,6 +1,7 @@
 import CreateForm from "@/components/create-form";
 import BackToContacts from "@/components/back-to-contacts";
 import { getBillById, getCustomers } from "@/lib/data";
+import { requireSession } from "@/lib/auth";
 
 const CreateContactPage = async ({
   searchParams,
@@ -8,6 +9,7 @@ const CreateContactPage = async ({
   params: { [key: string]: string };
   searchParams: { [key: string]: string };
 }) => {
+  await requireSession();
   const customers = await getCustomers("");
   const bill = await getBillById(parseInt(searchParams.id || "0"));
   return (

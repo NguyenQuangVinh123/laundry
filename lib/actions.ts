@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
+import { requireSession, requireRole } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -43,7 +44,8 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
       data: {
         customerId: customerId,
         amount: Number(formData.get("amount")),
-        note: formData.get("note")?.toString() ?? ""
+        note: formData.get("note")?.toString() ?? "",
+        createdById: session.id,
       },
     });
     await prisma.customer.update({
@@ -82,7 +84,8 @@ export const saveCustomer = async (prevSate: any, formData: FormData) => {
 };
 
 export const updateContact = async (prevSate: any, formData: FormData) => {
- 
+  await requireRole(["ADMIN"]);
+
   try {
     await prisma.bill.update({
       where: { id: Number(formData.get("id")) },
@@ -118,6 +121,8 @@ export const deleteContact = async (customerId: number) => {
 };
 
 export const saveFixedExpense = async (prevState: any, formData: FormData) => {
+  await requireRole(["ADMIN", "SUPERVISOR"]);
+
   try {
     const amount = Number(formData.get("amount"));
     const month = Number(formData.get("month"));

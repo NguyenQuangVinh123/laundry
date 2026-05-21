@@ -1,5 +1,5 @@
-import { requireRole } from "@/lib/auth";
-import AnalyticsClient from "./analytics-client";
+/* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 
 import { useEffect, useState } from "react";
 import { formatDate, formatDateNotHour } from "@/lib/utils";
@@ -45,7 +45,7 @@ interface AnalyticsData {
   fixedExpense: FixedExpense | null;
 }
 
-export default function AnalyticsPage() {
+export default function AnalyticsClient() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [fixedExpenseAmount, setFixedExpenseAmount] = useState("");

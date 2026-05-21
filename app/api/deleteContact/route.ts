@@ -1,8 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
+import { canManageBills } from "@/lib/permissions";
 
 export async function DELETE(req: Request) {
   try {
+    const session = await getSession();
+    if (!session || !canManageBills(session.role)) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const { id } = await req.json();
     if (!id) {
       return NextResponse.json({ message: "Bill ID is required" }, { status: 400 });
