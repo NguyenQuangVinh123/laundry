@@ -30,6 +30,8 @@ async function resolveCustomerId(raw: string): Promise<number> {
 }
 
 export const saveContact = async (prevSate: any, formData: FormData) => {
+  const session = await requireSession();
+
   let customerId: number;
   try {
     customerId = await resolveCustomerId(
