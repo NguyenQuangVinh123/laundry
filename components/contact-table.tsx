@@ -6,6 +6,7 @@ import {
 } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import {
+  canEditBill,
   canManageBills,
   canViewAnalytics,
   canViewFinancialTotals,
@@ -27,6 +28,7 @@ const ContactTable = async ({
   const showTotals = canViewFinancialTotals(session.role);
   const showAnalytics = canViewAnalytics(session.role);
   const canManage = canManageBills(session.role);
+  const canEdit = canEditBill(session.role);
   const showCreator = showTotals;
 
   const totalMonth = showTotals ? await getTotalMonth() : 0;
@@ -71,7 +73,11 @@ const ContactTable = async ({
               className="border-b transition-all duration-200 hover:bg-gray-100"
             >
               <td className="px-0 pl-1">
-                <EditButton id={contact.id.toString()} canManage={canManage} />
+                <EditButton
+                  id={contact.id.toString()}
+                  canManage={canManage}
+                  canEdit={canEdit}
+                />
               </td>
               <td className="px-1 py-4 lg:px-6 text-pink-600 text-center">
                 {contact.id}

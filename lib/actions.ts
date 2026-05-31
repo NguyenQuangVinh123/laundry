@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { requireSession, requireRole } from "@/lib/auth";
+import { canEditBillNoteOnly, canManageBills } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -86,17 +87,31 @@ export const saveCustomer = async (prevSate: any, formData: FormData) => {
 };
 
 export const updateContact = async (prevSate: any, formData: FormData) => {
-  await requireRole(["ADMIN"]);
+  const session = await requireSession();
+  const billId = Number(formData.get("id"));
+  const note = formData.get("note")?.toString() ?? "";
+
+  if (!billId || Number.isNaN(billId)) {
+    return { message: "Bill không hợp lệ" };
+  }
 
   try {
-    await prisma.bill.update({
-      where: { id: Number(formData.get("id")) },
-      data: {
-        amount: Number(formData.get("amount")),
-        note: formData.get("note")?.toString() ?? "",
-      },
-    });   
-
+    if (canManageBills(session.role)) {
+      await prisma.bill.update({
+        where: { id: billId },
+        data: {
+          amount: Number(formData.get("amount")),
+          note,
+        },
+      });
+    } else if (canEditBillNoteOnly(session.role)) {
+      await prisma.bill.update({
+        where: { id: billId },
+        data: { note },
+      });
+    } else {
+      return { message: "Không có quyền sửa bill" };
+    }
   } catch (error) {
     return { message: "Failed to update contact" };
   }

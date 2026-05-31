@@ -5,14 +5,15 @@ import axios from "axios";
 interface EditButtonProps {
   id: string;
   canManage: boolean;
+  canEdit: boolean;
 }
 
-export default function EditButton({ id, canManage }: EditButtonProps) {
+export default function EditButton({ id, canManage, canEdit }: EditButtonProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
 
-  if (!canManage) return null;
+  if (!canEdit) return null;
 
   return (
     <div className="cursor-pointer">
@@ -37,11 +38,12 @@ export default function EditButton({ id, canManage }: EditButtonProps) {
           />
         </svg>
 
+        {canManage && (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth="2"
+          strokeWidth={2}
           stroke="currentColor"
           className="w-6 h-6 text-red-500 transition-transform duration-200 hover:scale-110 hover:text-red-700"
           onClick={async () => {
@@ -68,6 +70,7 @@ export default function EditButton({ id, canManage }: EditButtonProps) {
           <path d="M14 11v6"></path>
           <polyline points="1 1 23 23"></polyline>
         </svg>
+        )}
       </div>
     </div>
   );

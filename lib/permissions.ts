@@ -12,6 +12,14 @@ export function canManageBills(role: UserRole) {
   return role === "ADMIN";
 }
 
+export function canEditBillNoteOnly(role: UserRole) {
+  return role === "EMPLOYEE";
+}
+
+export function canEditBill(role: UserRole) {
+  return canManageBills(role) || canEditBillNoteOnly(role);
+}
+
 export function roleLabel(role: UserRole): string {
   switch (role) {
     case "ADMIN":

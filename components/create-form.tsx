@@ -19,7 +19,15 @@ const filterCustomerOption = (
   );
 };
 
-const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
+const CreateForm = ({
+  customers,
+  bill,
+  noteOnly = false,
+}: {
+  customers: any;
+  bill: any;
+  noteOnly?: boolean;
+}) => {
   const action = bill ? updateContact : saveContact;
   const [state, formAction] = useFormState(action, bill);
   const mappingCustomer = useMemo<CustomerOption[]>(
@@ -37,12 +45,14 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
   const [form, setForm] = useState({
     customerId: "",
     amount: "",
+    note: "",
   });
   useEffect(() => {
     if (bill) {
       setForm({
-        customerId: bill.customerId,
-        amount: bill.amount,
+        customerId: String(bill.customerId),
+        amount: String(bill.amount),
+        note: bill.note ?? "",
       });
     }
   }, [bill]);
@@ -67,6 +77,7 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
     }));
   };
   const isFormValid = () => {
+    if (noteOnly) return Boolean(bill?.id);
     return form.customerId !== "" && form.amount !== "";
   };
   return (
@@ -110,15 +121,27 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
         >
           Amount
         </label>
-        <input
-          type="number"
-          name="amount"
-          id="amount"
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all duration-300 ease-in-out"
-          placeholder="Amount"
-          onChange={handleInputChange}
-          value={state && state.amount}
-        />
+        {noteOnly ? (
+          <>
+            <input
+              type="text"
+              readOnly
+              className="bg-gray-100 border border-gray-200 text-gray-700 text-sm rounded-md block w-full p-3 cursor-not-allowed"
+              value={Number(form.amount || 0).toLocaleString("en-US")}
+            />
+            <input type="hidden" name="amount" value={bill?.amount ?? ""} />
+          </>
+        ) : (
+          <input
+            type="number"
+            name="amount"
+            id="amount"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all duration-300 ease-in-out"
+            placeholder="Amount"
+            onChange={handleInputChange}
+            value={form.amount}
+          />
+        )}
       </div>
   
       <div className="mb-5">
@@ -135,12 +158,12 @@ const CreateForm = ({ customers, bill }: { customers: any; bill: any }) => {
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition-all duration-300 ease-in-out"
           placeholder="Note"
           onChange={handleInputChange}
-          value={state && state.note}
+          value={form.note}
         />
       </div>
   
       <SubmitButton
-          label={bill ? "edit" : "save"}
+          label={bill ? (noteOnly ? "Lưu ghi chú" : "edit") : "save"}
           disabled={!isFormValid()}
         />
     </form>
