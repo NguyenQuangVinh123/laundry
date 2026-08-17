@@ -6,6 +6,7 @@ import { SubmitButton } from "@/components/buttons";
 import CreatableSelect from "react-select/creatable";
 import { useEffect, useMemo, useState } from "react";
 import { normalizeForSearch } from "@/lib/utils";
+import { rememberBillAmount } from "@/components/bill-complete-popup";
 
 type CustomerOption = { value: number; label: string };
 
@@ -80,9 +81,15 @@ const CreateForm = ({
     if (noteOnly) return Boolean(bill?.id);
     return form.customerId !== "" && form.amount !== "";
   };
+
+  const handleSubmit = (formData: FormData) => {
+    if (!bill) rememberBillAmount(form.amount);
+    formAction(formData);
+  };
+
   return (
     <div>
-    <form action={formAction}>
+    <form action={handleSubmit}>
       <div className="hidden">
         <input type="number" name="id" id="id" value={bill && bill.id} />
       </div>

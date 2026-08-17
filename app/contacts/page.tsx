@@ -3,6 +3,7 @@ import { CreateButton } from "@/components/buttons";
 import { Suspense } from "react";
 import { TableSkeleton } from "@/components/skeleton";
 import ContactTable from "@/components/contact-table";
+import BillCompletePopup from "@/components/bill-complete-popup";
 import { requireSession } from "@/lib/auth";
 
 const Contacts = async ({
@@ -25,6 +26,7 @@ const Contacts = async ({
       <Suspense key={`${query}-${date}`} fallback={<TableSkeleton />}>
         <ContactTable query={query} date={date} session={session} />
       </Suspense>
+      <BillCompletePopup />
     </div>
   );
 };
