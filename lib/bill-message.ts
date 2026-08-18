@@ -4,7 +4,7 @@ export function formatBillAmount(amount: number) {
 
 export const BILL_COMPLETE_TITLE = "Đơn hàng của quý khách đã hoàn tất.";
 export const BILL_COMPLETE_NOTE =
-  "Nếu quý khách chuyển khoản thì vui lòng gửi hình chụp bill.";
+  "Cảm ơn quý khách đã tin tưởng sử dụng dịch vụ tại Tiệm Giặt Sấy Nhà Uyên";
 
 export function buildBillCompleteMessage(amount: number) {
   return [
