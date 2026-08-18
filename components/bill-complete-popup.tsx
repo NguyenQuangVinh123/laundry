@@ -158,6 +158,11 @@ export default function BillCompletePopup({ billId }: { billId: string | null })
           <p className="text-[17px] font-bold text-pink-800 leading-snug">
             {BILL_COMPLETE_TITLE}
           </p>
+          {billId && (
+            <p className="mt-1 text-sm text-gray-400">
+              Mã đơn: <span className="font-semibold text-gray-600">#{billId}</span>
+            </p>
+          )}
           <p className="mt-3 text-[28px] font-bold text-pink-500">
             {formatBillAmount(amount)}
           </p>
