@@ -35,6 +35,7 @@ export default function EditButton({ id, canManage, canEdit }: EditButtonProps) 
           />
         </svg>
 
+        {canManage && (
         <svg
           onClick={() => {
             const params = new URLSearchParams(searchParams.toString());
@@ -46,7 +47,7 @@ export default function EditButton({ id, canManage, canEdit }: EditButtonProps) 
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6 text-blue-500 transition-transform duration-200 hover:scale-110 hover:text-blue-700"
+          className="w-6 h-6 text-blue-500 transition-transform duration-200 hover:scale-110 hover:text-blue-700 cursor-pointer"
         >
           <path
             strokeLinecap="round"
@@ -54,6 +55,7 @@ export default function EditButton({ id, canManage, canEdit }: EditButtonProps) 
             d="M15.232 5.232a2.828 2.828 0 014 4L7.5 21H3v-4.5L15.232 5.232z"
           />
         </svg>
+        )}
 
         {canManage && (
         <svg
