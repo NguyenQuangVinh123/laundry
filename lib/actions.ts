@@ -5,6 +5,10 @@ import { canEditBillNoteOnly, canManageBills } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import {
+  deductMemberBalance,
+  previewMemberDeduction,
+} from "@/lib/member-actions";
 
 async function resolveCustomerId(raw: string): Promise<number> {
   const trimmed = raw.trim();
@@ -44,11 +48,26 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
   }
 
   try {
+    const amount = Number(formData.get("amount"));
+    let note = formData.get("note")?.toString() ?? "";
+
+    const preview = await previewMemberDeduction(customerId, amount * 1000);
+    if (preview && !preview.expired && preview.shortage > 0) {
+      const shortageK = preview.shortage / 1000;
+      const extra = `KH thanh toán thêm ${
+        Number.isInteger(shortageK)
+          ? shortageK
+          : shortageK.toLocaleString("vi-VN")
+      }K`;
+      const trimmed = note.trim();
+      note = trimmed ? `${trimmed} — ${extra}` : extra;
+    }
+
     const bill = await prisma.bill.create({
       data: {
         customerId: customerId,
-        amount: Number(formData.get("amount")),
-        note: formData.get("note")?.toString() ?? "",
+        amount,
+        note,
         createdById: session.id,
       },
     });
@@ -63,7 +82,28 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
         }
       }
     })
-    cookies().set("lastBillId", String(bill.id), { path: "/", maxAge: 60 });
+    const cookieStore = await cookies();
+    cookieStore.set("lastBillId", String(bill.id), { path: "/", maxAge: 60 });
+
+    const deduction = await deductMemberBalance(
+      customerId,
+      bill.amount * 1000,
+      bill.id,
+    );
+    if (deduction && !deduction.expired) {
+      cookieStore.set("memberBalance", String(deduction.balance), {
+        path: "/",
+        maxAge: 60,
+      });
+      if (deduction.shortage > 0) {
+        cookieStore.set("memberShortage", String(deduction.shortage), {
+          path: "/",
+          maxAge: 60,
+        });
+      } else {
+        cookieStore.delete("memberShortage");
+      }
+    }
   } catch (error) {
     return { message: "Failed to create contact" };
   }

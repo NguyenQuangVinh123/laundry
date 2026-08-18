@@ -12,6 +12,16 @@ export function canManageBills(role: UserRole) {
   return role === "ADMIN";
 }
 
+/** Đăng ký gói thành viên mới */
+export function canRegisterMember(role: UserRole) {
+  return role === "ADMIN" || role === "SUPERVISOR" || role === "EMPLOYEE";
+}
+
+/** Nạp / sửa gói / xóa thành viên */
+export function canManageMembers(role: UserRole) {
+  return role === "ADMIN" || role === "SUPERVISOR";
+}
+
 export function canEditBillNoteOnly(role: UserRole) {
   return role === "EMPLOYEE";
 }

@@ -18,7 +18,12 @@ const Contacts = async ({
   const session = await requireSession();
   const query = searchParams?.query || "";
   const date = searchParams?.date || "";
-  const lastBillId = cookies().get("lastBillId")?.value ?? null;
+  const cookieStore = await cookies();
+  const lastBillId = cookieStore.get("lastBillId")?.value ?? null;
+  const memberBalanceRaw = cookieStore.get("memberBalance")?.value ?? null;
+  const memberBalance = memberBalanceRaw ? Number(memberBalanceRaw) : null;
+  const memberShortageRaw = cookieStore.get("memberShortage")?.value ?? null;
+  const memberShortage = memberShortageRaw ? Number(memberShortageRaw) : null;
   return (
     <div className="max-w-screen-lg mx-auto">
       <div className="flex items-center justify-between gap-2 p-2 max-w-sm m-auto">
@@ -28,7 +33,11 @@ const Contacts = async ({
       <Suspense key={`${query}-${date}`} fallback={<TableSkeleton />}>
         <ContactTable query={query} date={date} session={session} />
       </Suspense>
-      <BillCompletePopup billId={lastBillId} />
+      <BillCompletePopup
+        billId={lastBillId}
+        memberBalance={memberBalance}
+        memberShortage={memberShortage}
+      />
     </div>
   );
 };

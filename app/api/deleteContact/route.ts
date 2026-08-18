@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canManageBills } from "@/lib/permissions";
+import { refundMemberBalanceForBill } from "@/lib/member-actions";
 
 export async function DELETE(req: Request) {
   try {
@@ -15,9 +16,10 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ message: "Bill ID is required" }, { status: 400 });
     }
 
-    // Delete bills associated with the customer
+    const billId = Number(id);
+    await refundMemberBalanceForBill(billId);
     await prisma.bill.delete({
-      where: { id: Number(id) },
+      where: { id: billId },
     });
     return NextResponse.json({ message: "Okay" }, { status: 200 });
   } catch (error) {

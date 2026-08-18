@@ -21,7 +21,15 @@ export function showBillPopup(billId: string) {
 
 /* ── Component ── */
 
-export default function BillCompletePopup({ billId: initialBillId }: { billId: string | null }) {
+export default function BillCompletePopup({
+  billId: initialBillId,
+  memberBalance,
+  memberShortage,
+}: {
+  billId: string | null;
+  memberBalance: number | null;
+  memberShortage?: number | null;
+}) {
   const [amount, setAmount] = useState<number | null>(null);
   const [activeBillId, setActiveBillId] = useState<string | null>(initialBillId);
   const [copied, setCopied] = useState(false);
@@ -58,7 +66,16 @@ export default function BillCompletePopup({ billId: initialBillId }: { billId: s
   if (amount == null) return null;
 
   const currentBillId = activeBillId;
-  const message = buildBillCompleteMessage(amount, currentBillId);
+  const baseMessage = buildBillCompleteMessage(amount, currentBillId);
+  const balanceLine =
+    memberBalance != null
+      ? `\n💳 Số dư thành viên: ${memberBalance.toLocaleString("vi-VN")} VNĐ`
+      : "";
+  const shortageLine =
+    memberShortage != null && memberShortage > 0
+      ? `\n💵 KH thanh toán thêm: ${memberShortage.toLocaleString("vi-VN")} VNĐ`
+      : "";
+  const message = baseMessage + balanceLine + shortageLine;
 
   const handleCopy = async () => {
     try {
@@ -89,6 +106,22 @@ export default function BillCompletePopup({ billId: initialBillId }: { billId: s
           <p className="mt-3 text-sm text-gray-500 leading-relaxed">
             {BILL_COMPLETE_NOTE}
           </p>
+          {memberBalance != null && (
+            <p className="mt-2 text-sm text-gray-600">
+              Số dư thành viên còn lại:{" "}
+              <span className="font-bold text-green-600">
+                {memberBalance.toLocaleString("vi-VN")} VNĐ
+              </span>
+            </p>
+          )}
+          {memberShortage != null && memberShortage > 0 && (
+            <p className="mt-1 text-sm text-orange-600">
+              KH thanh toán thêm:{" "}
+              <span className="font-bold">
+                {memberShortage.toLocaleString("vi-VN")} VNĐ
+              </span>
+            </p>
+          )}
         </div>
 
         <div className="mt-3 flex gap-2">

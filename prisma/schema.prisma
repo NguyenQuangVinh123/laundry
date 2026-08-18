@@ -35,6 +35,42 @@ model Customer {
   bills    Bill[]
   dateUsed DateTime[]
   totalUsed  Int      @default(0)
+  memberAccount MemberAccount?
+}
+
+enum MemberPackage {
+  INDIVIDUAL
+  FAMILY
+  SPA_HOTEL
+}
+
+enum TransactionType {
+  DEPOSIT
+  DEDUCTION
+  RECHARGE
+}
+
+model MemberAccount {
+  id          Int              @id @default(autoincrement())
+  customerId  Int              @unique
+  customer    Customer         @relation(fields: [customerId], references: [id])
+  package     MemberPackage
+  balance     Float            @default(0)
+  expiresAt   DateTime
+  createdAt   DateTime         @default(now())
+  transactions MemberTransaction[]
+}
+
+model MemberTransaction {
+  id              Int             @id @default(autoincrement())
+  memberAccountId Int
+  memberAccount   MemberAccount   @relation(fields: [memberAccountId], references: [id])
+  amount          Float
+  type            TransactionType
+  billId          Int?            @unique
+  bill            Bill?           @relation(fields: [billId], references: [id])
+  note            String          @default("")
+  dateCreated     DateTime        @default(now())
 }
 
 model Bill {
@@ -46,6 +82,7 @@ model Bill {
   note        String   @default("")
   createdById String?
   createdBy   User?    @relation("BillCreatedBy", fields: [createdById], references: [id])
+  memberTransaction MemberTransaction?
 }
 
 model FixedExpense {
