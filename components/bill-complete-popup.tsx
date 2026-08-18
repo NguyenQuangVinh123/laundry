@@ -114,14 +114,6 @@ function renderCanvas(amount: number) {
   return canvas;
 }
 
-async function copyImageToClipboard(amount: number) {
-  const canvas = renderCanvas(amount);
-  const blob = await new Promise<Blob>((res, rej) =>
-    canvas.toBlob((b) => (b ? res(b) : rej(new Error("toBlob"))), "image/png"),
-  );
-  await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-}
-
 function downloadImage(amount: number) {
   const canvas = renderCanvas(amount);
   const link = document.createElement("a");
@@ -132,7 +124,7 @@ function downloadImage(amount: number) {
 
 /* ── Component ── */
 
-export default function BillCompletePopup() {
+export default function BillCompletePopup({ billId }: { billId: string | null }) {
   const [amount, setAmount] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -146,21 +138,15 @@ export default function BillCompletePopup() {
 
   if (amount == null) return null;
 
-  const message = buildBillCompleteMessage(amount);
+  const message = buildBillCompleteMessage(amount, billId);
 
   const handleCopy = async () => {
     try {
-      await copyImageToClipboard(amount);
+      await navigator.clipboard.writeText(message);
       setCopied(true);
     } catch {
-      // fallback: copy text
-      try {
-        await navigator.clipboard.writeText(message);
-        setCopied(true);
-      } catch {
-        setCopied(false);
-        return;
-      }
+      setCopied(false);
+      return;
     }
     setTimeout(() => setCopied(false), 2000);
   };

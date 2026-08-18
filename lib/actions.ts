@@ -4,6 +4,7 @@ import { requireSession, requireRole } from "@/lib/auth";
 import { canEditBillNoteOnly, canManageBills } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 async function resolveCustomerId(raw: string): Promise<number> {
   const trimmed = raw.trim();
@@ -43,7 +44,7 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
   }
 
   try {
-    await prisma.bill.create({
+    const bill = await prisma.bill.create({
       data: {
         customerId: customerId,
         amount: Number(formData.get("amount")),
@@ -62,6 +63,7 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
         }
       }
     })
+    cookies().set("lastBillId", String(bill.id), { path: "/", maxAge: 60 });
   } catch (error) {
     return { message: "Failed to create contact" };
   }
