@@ -14,6 +14,116 @@ export function rememberBillAmount(amount: string) {
   sessionStorage.setItem(STORAGE_KEY, amount);
 }
 
+/* ── Canvas helpers ── */
+
+function wrapText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+) {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (ctx.measureText(next).width <= maxWidth) {
+      current = next;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function copyImageToClipboard(amount: number) {
+  const width = 640;
+  const padding = 48;
+  const borderW = 4;
+  const contentW = width - padding * 2;
+
+  const titleFont = "700 28px sans-serif";
+  const amountFont = "700 44px sans-serif";
+  const noteFont = "500 20px sans-serif";
+
+  /* measure heights */
+  const tmp = document.createElement("canvas").getContext("2d")!;
+  tmp.font = titleFont;
+  const titleLines = wrapText(tmp, BILL_COMPLETE_TITLE, contentW);
+  tmp.font = noteFont;
+  const noteLines = wrapText(tmp, BILL_COMPLETE_NOTE, contentW);
+
+  const titleH = titleLines.length * 38;
+  const amountH = 52;
+  const noteH = noteLines.length * 30;
+  const gap = 20;
+  const height = padding + titleH + gap + amountH + gap + noteH + padding;
+
+  /* draw */
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d")!;
+
+  // background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
+
+  // rounded card
+  roundRect(ctx, borderW / 2, borderW / 2, width - borderW, height - borderW, 28);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.strokeStyle = "#f9a8d4";
+  ctx.lineWidth = borderW;
+  ctx.stroke();
+
+  let y = padding;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+
+  // title
+  ctx.fillStyle = "#9d174d";
+  ctx.font = titleFont;
+  titleLines.forEach((line, i) => ctx.fillText(line, width / 2, y + i * 38));
+  y += titleH + gap;
+
+  // amount
+  ctx.fillStyle = "#ec4899";
+  ctx.font = amountFont;
+  ctx.fillText(formatBillAmount(amount), width / 2, y);
+  y += amountH + gap;
+
+  // note
+  ctx.fillStyle = "#6b7280";
+  ctx.font = noteFont;
+  noteLines.forEach((line, i) => ctx.fillText(line, width / 2, y + i * 30));
+
+  const blob = await new Promise<Blob>((res, rej) =>
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error("toBlob"))), "image/png"),
+  );
+  await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+}
+
+/* ── Component ── */
+
 export default function BillCompletePopup() {
   const [amount, setAmount] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
@@ -32,12 +142,19 @@ export default function BillCompletePopup() {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(message);
+      await copyImageToClipboard(amount);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
-      setCopied(false);
+      // fallback: copy text
+      try {
+        await navigator.clipboard.writeText(message);
+        setCopied(true);
+      } catch {
+        setCopied(false);
+        return;
+      }
     }
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
