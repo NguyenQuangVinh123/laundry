@@ -54,7 +54,7 @@ function roundRect(
   ctx.closePath();
 }
 
-async function copyImageToClipboard(amount: number) {
+function renderCanvas(amount: number) {
   const width = 640;
   const padding = 48;
   const borderW = 4;
@@ -83,11 +83,9 @@ async function copyImageToClipboard(amount: number) {
   canvas.height = height;
   const ctx = canvas.getContext("2d")!;
 
-  // background
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, width, height);
 
-  // rounded card
   roundRect(ctx, borderW / 2, borderW / 2, width - borderW, height - borderW, 28);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
@@ -99,27 +97,37 @@ async function copyImageToClipboard(amount: number) {
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
 
-  // title
   ctx.fillStyle = "#9d174d";
   ctx.font = titleFont;
   titleLines.forEach((line, i) => ctx.fillText(line, width / 2, y + i * 38));
   y += titleH + gap;
 
-  // amount
   ctx.fillStyle = "#ec4899";
   ctx.font = amountFont;
   ctx.fillText(formatBillAmount(amount), width / 2, y);
   y += amountH + gap;
 
-  // note
   ctx.fillStyle = "#6b7280";
   ctx.font = noteFont;
   noteLines.forEach((line, i) => ctx.fillText(line, width / 2, y + i * 30));
 
+  return canvas;
+}
+
+async function copyImageToClipboard(amount: number) {
+  const canvas = renderCanvas(amount);
   const blob = await new Promise<Blob>((res, rej) =>
     canvas.toBlob((b) => (b ? res(b) : rej(new Error("toBlob"))), "image/png"),
   );
   await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+}
+
+function downloadImage(amount: number) {
+  const canvas = renderCanvas(amount);
+  const link = document.createElement("a");
+  link.download = `don-hang-${formatBillAmount(amount).replace(/\s/g, "")}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 }
 
 /* ── Component ── */
@@ -179,6 +187,13 @@ export default function BillCompletePopup() {
             className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm text-gray-700 hover:bg-gray-50"
           >
             Đóng
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadImage(amount)}
+            className="flex-1 rounded-xl border border-pink-300 bg-white py-2.5 text-sm font-medium text-pink-600 hover:bg-pink-50"
+          >
+            Tải hình
           </button>
           <button
             type="button"
