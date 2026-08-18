@@ -14,6 +14,11 @@ export function rememberBillAmount(amount: string) {
   sessionStorage.setItem(STORAGE_KEY, amount);
 }
 
+/** Dispatch from anywhere to re-open the popup for a specific bill */
+export function showBillPopup(billId: string) {
+  window.dispatchEvent(new CustomEvent("show-bill-popup", { detail: { billId } }));
+}
+
 /* ── Canvas helpers ── */
 
 function wrapText(
@@ -124,21 +129,44 @@ function downloadImage(amount: number) {
 
 /* ── Component ── */
 
-export default function BillCompletePopup({ billId }: { billId: string | null }) {
+export default function BillCompletePopup({ billId: initialBillId }: { billId: string | null }) {
   const [amount, setAmount] = useState<number | null>(null);
+  const [activeBillId, setActiveBillId] = useState<string | null>(initialBillId);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    // auto-open after creating a new bill
     const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (raw == null || raw === "") return;
-    const parsed = Number(raw) * 1000;
-    sessionStorage.removeItem(STORAGE_KEY);
-    if (!Number.isNaN(parsed)) setAmount(parsed);
-  }, []);
+    if (raw != null && raw !== "") {
+      const parsed = Number(raw) * 1000;
+      sessionStorage.removeItem(STORAGE_KEY);
+      if (!Number.isNaN(parsed)) {
+        setAmount(parsed);
+        setActiveBillId(initialBillId);
+      }
+    }
+
+    // listen for re-open events
+    const handler = async (e: Event) => {
+      const { billId } = (e as CustomEvent).detail as { billId: string };
+      try {
+        const res = await fetch(`/api/bills/${billId}`);
+        if (!res.ok) return;
+        const bill = await res.json();
+        setActiveBillId(String(bill.id));
+        setAmount(bill.amount);
+      } catch {
+        // silently ignore
+      }
+    };
+    window.addEventListener("show-bill-popup", handler);
+    return () => window.removeEventListener("show-bill-popup", handler);
+  }, [initialBillId]);
 
   if (amount == null) return null;
 
-  const message = buildBillCompleteMessage(amount, billId);
+  const currentBillId = activeBillId;
+  const message = buildBillCompleteMessage(amount, currentBillId);
 
   const handleCopy = async () => {
     try {
@@ -158,9 +186,9 @@ export default function BillCompletePopup({ billId }: { billId: string | null })
           <p className="text-[17px] font-bold text-pink-800 leading-snug">
             {BILL_COMPLETE_TITLE}
           </p>
-          {billId && (
+          {currentBillId && (
             <p className="mt-1 text-sm text-gray-400">
-              Mã đơn: <span className="font-semibold text-gray-600">#{billId}</span>
+              Mã đơn: <span className="font-semibold text-gray-600">#{currentBillId}</span>
             </p>
           )}
           <p className="mt-3 text-[28px] font-bold text-pink-500">
@@ -174,7 +202,7 @@ export default function BillCompletePopup({ billId }: { billId: string | null })
         <div className="mt-3 flex gap-2">
           <button
             type="button"
-            onClick={() => setAmount(null)}
+            onClick={() => { setAmount(null); setCopied(false); }}
             className="flex-1 rounded-xl border border-gray-200 bg-white py-2.5 text-sm text-gray-700 hover:bg-gray-50"
           >
             Đóng
