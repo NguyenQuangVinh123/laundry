@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { canRegisterMember } from "@/lib/permissions";
 import { getPackageConfig } from "@/lib/member-packages";
+import { capitalizeCustomerName } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -39,7 +40,9 @@ export async function POST(req: NextRequest) {
     if (byName) {
       customerId = byName.id;
     } else {
-      const created = await prisma.customer.create({ data: { name: trimmed } });
+      const created = await prisma.customer.create({
+        data: { name: capitalizeCustomerName(trimmed) },
+      });
       customerId = created.id;
     }
   }

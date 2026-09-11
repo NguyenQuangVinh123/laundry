@@ -54,6 +54,14 @@ export function normalizeForSearch(text: string): string {
     .replace(/đ/g, "d");
 }
 
+export function capitalizeCustomerName(name: string): string {
+  const trimmed = name.trim().replace(/\s+/g, " ");
+  if (!trimmed) return trimmed;
+  return (
+    trimmed.charAt(0).toLocaleUpperCase("vi") + trimmed.slice(1)
+  );
+}
+
 const VN_OFFSET_MS = 7 * 60 * 60 * 1000;
 
 /** Đầu/cuối ngày theo giờ Việt Nam (UTC+7). `date` dạng YYYY-MM-DD từ ô chọn ngày. */

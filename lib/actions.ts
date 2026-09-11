@@ -9,6 +9,7 @@ import {
   deductMemberBalance,
   previewMemberDeduction,
 } from "@/lib/member-actions";
+import { capitalizeCustomerName } from "@/lib/utils";
 
 async function resolveCustomerId(raw: string): Promise<number> {
   const trimmed = raw.trim();
@@ -30,7 +31,7 @@ async function resolveCustomerId(raw: string): Promise<number> {
   if (byName) return byName.id;
 
   const created = await prisma.customer.create({
-    data: { name: trimmed },
+    data: { name: capitalizeCustomerName(trimmed) },
   });
   return created.id;
 }
@@ -116,7 +117,7 @@ export const saveCustomer = async (prevSate: any, formData: FormData) => {
   try {
     await prisma.customer.create({
       data: {
-        name: formData.get("name") as string,
+        name: capitalizeCustomerName((formData.get("name") as string) ?? ""),
         phone: formData.get("phone") as string
       },
     });
