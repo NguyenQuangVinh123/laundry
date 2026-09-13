@@ -9,7 +9,6 @@ type Member = {
   id: number;
   package: string;
   balance: number;
-  expiresAt: string;
   createdAt: string;
   customer: { name: string; phone: string | null };
 };
@@ -24,10 +23,6 @@ const PACKAGE_LABELS: Record<string, string> = {
 
 function formatVND(amount: number) {
   return `${amount.toLocaleString("vi-VN")} ₫`;
-}
-
-function isExpired(date: string) {
-  return new Date(date) < new Date();
 }
 
 const filterCustomerOption = (
@@ -160,9 +155,7 @@ export default function MemberList({
                 </td>
               </tr>
             )}
-            {filteredMembers.map((m) => {
-              const expired = isExpired(m.expiresAt);
-              return (
+            {filteredMembers.map((m) => (
                 <tr key={m.id} className="hover:bg-gray-50">
                   <td className="px-3 py-3">
                     <p className="font-semibold text-gray-800">{m.customer.name}</p>
@@ -179,9 +172,9 @@ export default function MemberList({
                     {formatVND(m.balance)}
                   </td>
                   <td className="px-3 py-3 text-center">
-                    {expired || m.balance <= 0 ? (
+                    {m.balance <= 0 ? (
                       <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-600">
-                        {expired ? "Hết hạn" : "Hết dư"}
+                        Hết dư
                       </span>
                     ) : (
                       <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-600">
@@ -217,8 +210,7 @@ export default function MemberList({
                     </td>
                   )}
                 </tr>
-              );
-            })}
+            ))}
           </tbody>
         </table>
       </div>
@@ -316,14 +308,14 @@ function ActionModal({ member, action, onClose }: {
             >
               {MEMBER_PACKAGES.map((p) => (
                 <option key={p.key} value={p.key}>
-                  {p.label} — Nạp {p.deposit}K → {p.bonus}K ({p.validityDays} ngày)
+                  {p.label} — Nạp {p.deposit}K → {p.bonus}K
                 </option>
               ))}
             </select>
             {config && (
               <p className="mt-2 text-xs text-gray-500">
-                Số dư sẽ được set thành <strong className="text-green-600">{config.bonus}K</strong>,
-                hạn <strong>{config.validityDays} ngày</strong> từ hôm nay.
+                Số dư sẽ được set thành{" "}
+                <strong className="text-green-600">{config.bonus}K</strong>.
               </p>
             )}
           </div>
@@ -450,7 +442,7 @@ function RegisterForm({
           >
             {MEMBER_PACKAGES.map((p) => (
               <option key={p.key} value={p.key}>
-                {p.label} — Nạp {p.deposit}K → {p.bonus}K ({p.validityDays} ngày)
+                {p.label} — Nạp {p.deposit}K → {p.bonus}K
               </option>
             ))}
           </select>
@@ -461,7 +453,7 @@ function RegisterForm({
         <p>
           Nạp <strong>{config.deposit}K</strong> → Nhận{" "}
           <strong className="text-green-600">{config.bonus}K</strong> số dư
-          (tặng <strong>{config.extra}K</strong>) · Hạn {config.validityDays} ngày
+          (tặng <strong>{config.extra}K</strong>)
         </p>
         <p className="text-xs text-gray-400 mt-1">{config.description}</p>
       </div>

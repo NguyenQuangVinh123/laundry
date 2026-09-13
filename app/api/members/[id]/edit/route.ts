@@ -30,16 +30,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Không tìm thấy thành viên." }, { status: 404 });
   }
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + config.validityDays);
-
   try {
     const account = await prisma.memberAccount.update({
       where: { id: Number(memberId) },
       data: {
         package: config.key,
         balance: config.bonus * 1000,
-        expiresAt,
         transactions: {
           create: {
             amount: config.bonus * 1000,

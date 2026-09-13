@@ -34,16 +34,12 @@ export const createMemberAccount = async (
     return { error: "Khách đã có tài khoản thành viên. Dùng nạp thêm." };
   }
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + config.validityDays);
-
   try {
     const account = await prisma.memberAccount.create({
       data: {
         customerId,
         package: config.key,
         balance: config.bonus * 1000, // lưu theo đơn vị VND (bonus tính bằng nghìn)
-        expiresAt,
         transactions: {
           create: {
             amount: config.bonus * 1000,
@@ -91,17 +87,11 @@ export const rechargeMember = async (
       return { error: "Không tìm thấy tài khoản." };
     }
 
-    // extend expiry from now (or from current expiry if not yet expired)
-    const base = account.expiresAt > new Date() ? account.expiresAt : new Date();
-    const newExpiry = new Date(base);
-    newExpiry.setDate(newExpiry.getDate() + config.validityDays);
-
     await prisma.memberAccount.update({
       where: { id: accountId },
       data: {
         balance: { increment: config.bonus * 1000 },
         package: config.key,
-        expiresAt: newExpiry,
         transactions: {
           create: {
             amount: config.bonus * 1000,
@@ -150,7 +140,6 @@ export async function getAllMembers() {
 }
 
 export type MemberDeductionPreview = {
-  expired: boolean;
   /** Số dư ví trước khi trừ (VND) */
   balance: number;
   /** Số sẽ trừ từ ví (VND), không vượt số dư */
@@ -184,19 +173,9 @@ export async function previewMemberDeduction(
   });
   if (!account) return null;
 
-  if (account.expiresAt < new Date()) {
-    return {
-      expired: true,
-      balance: account.balance,
-      deducted: 0,
-      shortage: 0,
-    };
-  }
-
   const available = Math.max(account.balance, 0);
   const deducted = Math.min(available, amountVnd);
   return {
-    expired: false,
     balance: available,
     deducted,
     shortage: amountVnd - deducted,
@@ -214,13 +193,9 @@ export async function deductMemberBalance(
 ) {
   const preview = await previewMemberDeduction(customerId, amount);
   if (!preview) return null;
-  if (preview.expired) {
-    return { expired: true as const, balance: preview.balance, shortage: 0 };
-  }
 
   if (preview.deducted <= 0) {
     return {
-      expired: false as const,
       balance: preview.balance,
       shortage: preview.shortage,
     };
@@ -248,7 +223,6 @@ export async function deductMemberBalance(
   });
 
   return {
-    expired: false as const,
     balance: newBalance,
     shortage: preview.shortage,
   };

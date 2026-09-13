@@ -57,16 +57,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + config.validityDays);
-
   try {
     const account = await prisma.memberAccount.create({
       data: {
         customerId,
         package: config.key,
         balance: config.bonus * 1000,
-        expiresAt,
         transactions: {
           create: {
             amount: config.bonus * 1000,

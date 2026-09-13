@@ -17,7 +17,6 @@ export default async function MembersPage() {
   const members = rawMembers.map((m: (typeof rawMembers)[number]) => ({
     ...m,
     createdAt: m.createdAt.toISOString(),
-    expiresAt: m.expiresAt.toISOString(),
     package: m.package,
   }));
 

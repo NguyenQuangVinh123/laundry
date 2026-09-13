@@ -53,7 +53,7 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
     let note = formData.get("note")?.toString() ?? "";
 
     const preview = await previewMemberDeduction(customerId, amount * 1000);
-    if (preview && !preview.expired && preview.shortage > 0) {
+    if (preview && preview.shortage > 0) {
       const shortageK = preview.shortage / 1000;
       const extra = `KH thanh toán thêm ${
         Number.isInteger(shortageK)
@@ -91,7 +91,7 @@ export const saveContact = async (prevSate: any, formData: FormData) => {
       bill.amount * 1000,
       bill.id,
     );
-    if (deduction && !deduction.expired) {
+    if (deduction) {
       cookieStore.set("memberBalance", String(deduction.balance), {
         path: "/",
         maxAge: 60,

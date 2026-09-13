@@ -56,7 +56,6 @@ model MemberAccount {
   customer    Customer         @relation(fields: [customerId], references: [id])
   package     MemberPackage
   balance     Float            @default(0)
-  expiresAt   DateTime
   createdAt   DateTime         @default(now())
   transactions MemberTransaction[]
 }
